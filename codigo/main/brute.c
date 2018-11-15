@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
+#include <assert.h>
 #include "key.h"
 #include "util.h"
 
@@ -12,32 +12,45 @@ int compare_key(Key k1, Key k2) {
 	return 0;
 }
 
-void dec_to_bin(int num, unsigned short int* bin, int size){
+Key int_to_key(ulong_t num) {
+	Key key;
+	for (int i = C-1; i >= 0; i--) {
+		key.digit[i] = num % R;
+		num = num >> B;
+	}
+	return key;
+}
+
+void int_to_bin(int num, uchar_t* bin, int size){
 	for (int aux = size-1; aux >= 0; aux--) {
-		if (num % 2 == 0) bin[aux] = 0;
-		else bin[aux] = 1;
+		bin[aux] = num % 2;
 		num = num / 2;
 	}
 }
 
-int bin_to_dec(unsigned short int* bin, int size) {
+int bin_to_int(uchar_t* bin, int size) {
 	int s = size;
-	int dec = 0;
-	int i = 0;
-	while(s--) dec = dec + pow(2, i++) * bin[s];
-	return dec;
+	int pos = 1;
+	int num = 0;
+	while (s--) {
+		num += pos * bin[s];
+		pos <<= 1;
+	}
+	return num;
 }
 
-void bin_to_string(unsigned short int* bin, uchar_t* word) {
+void bin_to_string(uchar_t* bin, uchar_t* word) {
 	int k = 0;
-	unsigned short int characterb[B];
+	uchar_t characterb[B];
 	for (int i = 0; i < N; i = i+B){
 		int aux = i;
-		for (int j = 0; j < B; j++) characterb[j] = bin[aux++];
-		word[k] = ALPHABET[bin_to_dec(characterb,B)];
+		for (int j = 0; j < B; j++)
+			characterb[j] = bin[aux++];
+		word[k] = ALPHABET[bin_to_int(characterb, B)];
 		k++;
 	}
 }
+
 
 int main(int argc, char** argv) {
 
@@ -49,17 +62,20 @@ int main(int argc, char** argv) {
 	}
 
 	Key in = init_key((uchar_t*)argv[1]);
-	int size = pow(32,B);
 
-	unsigned short int comb[N];
-	uchar_t word[C];
+	// uchar_t comb[N];
+	// uchar_t word[C];
 
-	for (int i = 0; i < size; i++) {
-		dec_to_bin(i, comb, N);
-		bin_to_string(comb, word);
-		Key kword = init_key(word);
+	// Quantidade total de combinações de senhas
+	const ulong_t quant = 1 << (B*C);
+
+	for (int i = 0; i < quant; i++) {
+		// int_to_bin(i, comb, N);
+		// bin_to_string(comb, word);
+		// Key kword = init_key(word);
+		Key kword = int_to_key(i);
 		Key sum = subset_sum(kword, table);
-		if (compare_key(sum,in) == 0) {
+		if (compare_key(sum, in) == 0) {
 			print_key_char(kword);
 			return 0;
 		}
