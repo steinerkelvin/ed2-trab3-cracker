@@ -68,8 +68,8 @@ Key subset_sum(Key k, Key T[N]) {
     for (int i = 0; i < N; i++) {
         if (bit(k, i)) {
             sum = add(sum, T[i]);
-            printf("%2d ", i);           // Para teste.
-            print_key(T[i]);             // Para teste.
+           // printf("%2d ", i);           // Para teste.
+           // print_key(T[i]);             // Para teste.
         }
     }
    return sum;
