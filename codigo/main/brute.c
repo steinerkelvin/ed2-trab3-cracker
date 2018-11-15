@@ -77,9 +77,8 @@ int main(int argc, char** argv) {
 		Key sum = subset_sum(kword, table);
 		if (compare_key(sum, in) == 0) {
 			print_key_char(kword);
-			return 0;
 		}
 	}
 
-	return 1;
+	return 0;
 }
