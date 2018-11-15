@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include "key.h"
+#include "util.h"
 
 int compare_key(Key k1, Key k2) {
 	for (int i = 0; i < C; i++) {
@@ -27,7 +28,7 @@ int bin_to_dec(unsigned short int* bin, int size) {
 	return dec;
 }
 
-void bin_to_string(unsigned short int* bin, char* word) {
+void bin_to_string(unsigned short int* bin, uchar_t* word) {
 	int k = 0;
 	unsigned short int characterb[B];
 	for (int i = 0; i < N; i = i+B){
@@ -38,27 +39,31 @@ void bin_to_string(unsigned short int* bin, char* word) {
 	}
 }
 
-void main(int argc, char** argv) {
+int main(int argc, char** argv) {
 
 	Key table[N];
 	for (int i = 0; i < N; i++) {
-		char aux[C];
+		uchar_t aux[C];
 		scanf("%s",aux);
 		table[i] = init_key(aux);
 	}
 
-	Key in = init_key(argv[1]);
+	Key in = init_key((uchar_t*)argv[1]);
 	int size = pow(32,B);
 
 	unsigned short int comb[N];
-	char word[C];
+	uchar_t word[C];
 
 	for (int i = 0; i < size; i++) {
-		dec_to_bin(i,comb,N);
-		bin_to_string(comb,word);
+		dec_to_bin(i, comb, N);
+		bin_to_string(comb, word);
 		Key kword = init_key(word);
-		Key sum = subset_sum(kword,table);
-		if (compare_key(sum,in) == 0) print_key_char(kword);
+		Key sum = subset_sum(kword, table);
+		if (compare_key(sum,in) == 0) {
+			print_key_char(kword);
+			return 0;
+		}
 	}
 
+	return 1;
 }
