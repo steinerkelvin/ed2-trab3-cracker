@@ -84,13 +84,13 @@ int main(int argc, char** argv) {
     }
 
 	// // Quantidade total de combinações de senhas
-	// const ulong_t quant = 1 << N;
+	const ulong_t quant = 1UL << N;
 
-    Key key;
-	// for (ulong_t i = 0; i < quant; i++) {
-	for (;;) {
-		// Key key = int_to_key(i);
-		inc_key(&key);
+    // Key key;
+	for (ulong_t i = 0; i < quant; i++) {
+	// for (;;) {
+		Key key = int_to_key(i);
+		// inc_key(&key);
 
 		// Key sum = subset_sum(key, table);
         Key sum = tabelinha_sum(key);
@@ -98,8 +98,8 @@ int main(int argc, char** argv) {
 			print_key_char(key);
 		}
 
-		if (ismax_key(key))
-			break;
+		// if (ismax_key(key))
+		// 	break;
 	}
 
 	return 0;

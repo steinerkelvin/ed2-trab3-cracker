@@ -77,7 +77,7 @@ int main(int argc, char** argv) {
 	// uchar_t word[C];
 
 	// Quantidade total de combinações de senhas
-	const ulong_t quant = 1 << N;
+	const ulong_t quant = 1UL << N;
 
 	for (ulong_t i = 0; i < quant; i++) {
 		// int_to_bin(i, comb, N);

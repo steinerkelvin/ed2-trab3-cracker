@@ -52,7 +52,7 @@ int main(int argc, char** argv) {
 	Key in = init_key((uchar_t*)argv[1]);
 
 	// Quantidade total de combinações de senhas
-	const ulong_t quant = 1 << N;
+	const ulong_t quant = 1UL << N;
 
     Key key;
 	for (ulong_t i = 0; i < quant; i++) {
