@@ -21,6 +21,16 @@ Key int_to_key(ulong_t num) {
 	return key;
 }
 
+ulong_t key_to_int(Key key) {
+	ulong_t num = 0;
+	ulong_t pos = 1;
+	for (int i = C-1; i >= 0; i--) {
+		num += key.digit[i] * pos;
+		pos = pos << B;
+	}
+	return num;
+}
+
 void int_to_bin(int num, uchar_t* bin, int size){
 	for (int aux = size-1; aux >= 0; aux--) {
 		bin[aux] = num % 2;
@@ -67,9 +77,9 @@ int main(int argc, char** argv) {
 	// uchar_t word[C];
 
 	// Quantidade total de combinações de senhas
-	const ulong_t quant = 1 << (B*C);
+	const ulong_t quant = 1 << N;
 
-	for (int i = 0; i < quant; i++) {
+	for (ulong_t i = 0; i < quant; i++) {
 		// int_to_bin(i, comb, N);
 		// bin_to_string(comb, word);
 		// Key kword = init_key(word);
