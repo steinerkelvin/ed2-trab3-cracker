@@ -7,9 +7,11 @@ Key init_key(unsigned char s[]) {
     // Converte cada char em um int no intervalo 0-31.
     Key k;
     for (int i = 0; i < C; i++) {
+        k.digit[i] = 0;
         for (int j = 0; j < R; j++) {
             if (s[i] == ALPHABET[j]) {
                 k.digit[i] = j;
+                break;
             }
         }
     }
