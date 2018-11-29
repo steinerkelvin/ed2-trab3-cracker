@@ -76,3 +76,14 @@ Key subset_sum(Key k, Key T[N]) {
     }
    return sum;
 }
+
+// ===== //
+
+int Key_compare(const Key* a, const Key* b){
+    for (int i = 0; i < C; i++) {
+        const int diff = a->digit[i] - b->digit[i];
+	    if (diff)
+            return diff;
+    }
+    return 0;
+}

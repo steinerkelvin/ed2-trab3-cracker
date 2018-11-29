@@ -19,7 +19,7 @@ EXES=$(patsubst main/%.c,bin/%,$(MAINS))
 
 # Target padrão
 all: exe
-	cp -f "./bin/$(BIN_NAME)" "./$(BIN_NAME)"
+	@#cp -f "./bin/$(BIN_NAME)" "./$(BIN_NAME)"
 
 # Compila todos os executáveis
 exe: $(EXES)

@@ -5,16 +5,21 @@
 #include "avl.h"
 #include "key.h"
 
-//AVL modificada para ser usada na hashtable para o tipo Key.
+// AVL modificada para ser usada na hashtable para o tipo Key.
 
-AVL* recursiveSearch(AVL* b, Key k) {
-    if (b == NULL) return NULL;
-    if (compareKeys(b->k,k) == 0) return b;
-    if (compareKeys(b->k,k) < 0) return recursiveSearch(b->right,k);
-    else return recursiveSearch(b->right,k);
+AVL* avl_search(AVL* b, const Key* k) {
+    if (b == NULL)
+        return NULL;
+    int diff = Key_compare(k, &b->k);
+    if (diff == 0)
+        return b;
+    if (diff > 0)
+        return avl_search(b->right, k);
+    else
+        return avl_search(b->left, k);
 }
 
-int height(AVL* tree){
+int avl_height(AVL* tree){
     if(tree){
 	   return tree->b;
     }
@@ -22,10 +27,10 @@ int height(AVL* tree){
 }
 
 int balancing(AVL* tree){
-    return labs(height(tree->left)-height(tree->right));
+    return labs(avl_height(tree->left)-avl_height(tree->right));
 }
 
-int returnsGreater(int x, int y){
+static int max(int x, int y){
     return ((x > y) ? x : y);
 }
 
@@ -33,8 +38,8 @@ void rotateLeft(AVL** tree){
     AVL* temp = (*tree)->left;
     (*tree)->left = temp->right;
     temp->right = *tree;
-    (*tree)->b = returnsGreater(height((*tree)->left), height((*tree)->right)) + 1;
-    temp->b = returnsGreater(height(temp->left), (*tree)->b) + 1;
+    (*tree)->b = max(avl_height((*tree)->left), avl_height((*tree)->right)) + 1;
+    temp->b = max(avl_height(temp->left), (*tree)->b) + 1;
     *tree = temp;
 }
 
@@ -42,8 +47,8 @@ void rotateRight(AVL** tree){
     AVL* temp = (*tree)->right;
     (*tree)->right = temp->left;
     temp->left = (*tree);
-    (*tree)->b = returnsGreater(height((*tree)->left),height((*tree)->right)) + 1;
-    temp->b = returnsGreater(height(temp->right), (*tree)->b) + 1;
+    (*tree)->b = max(avl_height((*tree)->left),avl_height((*tree)->right)) + 1;
+    temp->b = max(avl_height(temp->right), (*tree)->b) + 1;
     *tree = temp;
 }
 
@@ -58,34 +63,37 @@ void rotateLR(AVL** tree){
 }
 
 int avl_insert(AVL** tree, Key k, int num){
-	printf("inserindo %d\n",num);
-    int res;
     if(!(*tree)){
         AVL* aux = malloc(sizeof(AVL));
-        aux->k = k; aux->n = num; aux->b = 0; aux->left = aux->right = NULL;
+        aux->k = k;
+        aux->n = num;
+        aux->b = 0;
+        aux->left = aux->right = NULL;
         (*tree) = aux;
         return 1;
     }
 
+    int res;
     AVL* temp = (*tree);
-    if(num < temp->n){
+    if(Key_compare(&k, &temp->k) < 0){
         if((res = avl_insert((&(temp->left)), k, num)) == 1)
-            if(balancing(temp) >= 2){
-                if( num < (*tree)->left->n )
+            if(balancing(temp) >= 2) {
+                if( Key_compare(&k, &temp->left->k ) < 0 )
                     rotateLeft(tree);
                 else
                     rotateLR(tree);
             }
-    }
-    else{
+    } else {
         if((res = avl_insert((&(temp->right)), k, num)) == 1)
             if(balancing(temp) >= 2) {
-                if(num >= (*tree)->right->n) rotateRight(tree);
-                else rotateRL(tree);
+                if( Key_compare(&k, &temp->right->k ) >= 0 )
+                    rotateRight(tree);
+                else
+                    rotateRL(tree);
             }
     }
 
-    temp->b = returnsGreater( height(temp->left), height(temp->right) ) + 1;
+    temp->b = max( avl_height(temp->left), avl_height(temp->right) ) + 1;
 
     return res;
 }
@@ -101,9 +109,8 @@ void avl_print(AVL* tree){
 }
 
 void avl_free(AVL* a){
-  if (a == NULL) return;
-  avl_free(a->left);
-  avl_free(a->right);
-  free(a);
-  return;
+    if (a == NULL) return;
+    avl_free(a->left);
+    avl_free(a->right);
+    free(a);
 }

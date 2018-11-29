@@ -1,7 +1,7 @@
 #ifndef KEY_H
 #define KEY_H
 
-#define C 6          // Número de caracteres na senha.
+#define C 12          // Número de caracteres na senha.
 #define B 5          // Número de bits por caractere.
 #define R (1 << B)   // Tamanho do alfabeto (sempre = 32).
 #define N (B * C)    // Número de bits por senha.
@@ -34,5 +34,11 @@ Key add(Key a, Key b);
 // Soma (módulo 2^N) e retorna o subconjunto dos inteiros T[i] que
 // são indexados pelos bits de k.
 Key subset_sum(Key k, Key T[N]);
+
+// ======== //
+
+// Compara duas Keys
+int Key_compare(const Key* a, const Key* b);
+
 
 #endif

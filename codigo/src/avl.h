@@ -1,7 +1,7 @@
 #ifndef AVL_H
 #define AVL_H
 
-//AVL modificada para ser usada na hashtable para o tipo Key.
+// AVL para o tipo Key.
 
 #include "key.h"
 
@@ -15,9 +15,9 @@ struct avl{
     AVL* right;
 };
 
-AVL* recursiveSearch(AVL* b, Key k);
+AVL* avl_search(AVL* b, const Key* k);
 
-int height(AVL* tree);
+int avl_height(AVL* tree);
 
 int avl_insert(AVL** tree, Key k, int num);
 
