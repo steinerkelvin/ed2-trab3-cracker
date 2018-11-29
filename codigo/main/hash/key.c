@@ -22,6 +22,13 @@ Key init_key(unsigned char s[]) {
     return k;
 }
 
+int compareKeys(Key a, Key b){
+    for (int i = 0; i<C; i++) {
+	if (a.digit[i] != b.digit[i]) return a.digit[i] - b.digit[i];
+    }
+    return 0;
+}
+
 // Exibe a chave 'k' em stdout em três formatos: chars, ints (base R) e binário.
 void print_key(Key k) {
     for (int i = 0; i < C; i++) {

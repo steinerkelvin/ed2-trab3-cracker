@@ -9,8 +9,8 @@
 
 AVL* recursiveSearch(AVL* b, Key k) {
     if (b == NULL) return NULL;
-    if (strcmp(b->k.digit,k.digit) == 0) return b;
-    if (strcmp(b->k.digit,k.digit) < 0) return recursiveSearch(b->right,k);
+    if (compareKeys(b->k,k) == 0) return b;
+    if (compareKeys(b->k,k) < 0) return recursiveSearch(b->right,k);
     else return recursiveSearch(b->right,k);
 }
 

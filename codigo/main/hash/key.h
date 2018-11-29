@@ -19,6 +19,9 @@ typedef struct {
 // Exemplo: s = "abcdwxyz"  =>  k = 0 1 2 3 22 23 24 25
 Key init_key(unsigned char s[]);
 
+// Compara 2 Keys a e b.
+int compareKeys(Key a, Key b);
+
 // Exibe a chave 'k' em stdout em três formatos: chars, ints (base R) e binário.
 void print_key(Key k);
 
