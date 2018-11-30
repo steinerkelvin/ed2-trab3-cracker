@@ -1,6 +1,8 @@
 #ifndef HASH_TABLE_H
 #define HASH_TABLE_H
 
+#include "symbol.h"
+#include "key.h"
 #include "avl.h"
 
 #define HT_SIZE 67867967

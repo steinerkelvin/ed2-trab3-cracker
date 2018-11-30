@@ -87,3 +87,38 @@ int Key_compare(const Key* a, const Key* b){
     }
     return 0;
 }
+
+bool Key_isEqual(const Key *k1, const Key *k2) {
+	for (int i = 0; i < C; i++) {
+		if ( k1->digit[i] != k2->digit[i] )
+            return 0;
+	}
+	return 1;
+}
+
+void Key_inc(Key *key) {
+    for (int i = C-1; i >= 0; i--) {
+		key->digit[i] += 1;
+		if (key->digit[i] < R)
+			break;
+		key->digit[i] %= R;
+    }
+}
+
+bool Key_isMax(const Key *k) {
+	for (int i = C-1; i >= 0; i--) {
+		if (k->digit[i] != (R-1))
+			return 0;
+	}
+	return 1;
+}
+
+void Key_add(Key *res, const Key *a, const Key *b) {
+    int carry = 0;
+    for (int i = C-1; i >= 0; i--) {
+        int sum       = a->digit[i] + b->digit[i] + carry;
+        res->digit[i] = sum  % R;
+        carry         = (sum >= R);
+    }
+}
+

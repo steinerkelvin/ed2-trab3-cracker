@@ -1,15 +1,18 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <assert.h>
-#include "util.h"
 #include "key.h"
+#include "util.h"
 #include "per_digit.h"
+
+// TODO testar tabela de símbolos
+
+Key perDigitTable[C][R];
 
 int main(int argc, char** argv) {
 
 	Key table[N];
-	Key perDigitTable[C][R];
-
 	for (int i = 0; i < N; i++) {
 		uchar_t aux[C];
 		scanf("%s",aux);

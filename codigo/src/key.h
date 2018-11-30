@@ -1,7 +1,9 @@
 #ifndef KEY_H
 #define KEY_H
 
-#define C 12          // Número de caracteres na senha.
+#include <stdbool.h>
+
+#define C 6          // Número de caracteres na senha.
 #define B 5          // Número de bits por caractere.
 #define R (1 << B)   // Tamanho do alfabeto (sempre = 32).
 #define N (B * C)    // Número de bits por senha.
@@ -37,8 +39,16 @@ Key subset_sum(Key k, Key T[N]);
 
 // ======== //
 
+void Key_inc(Key *key);
+
+bool Key_isMax(const Key *k);
+
 // Compara duas Keys
 int Key_compare(const Key* a, const Key* b);
+
+bool Key_isEqual(const Key *k1, const Key *k2);
+
+void Key_add(Key *res, const Key *a, const Key *b);
 
 
 #endif
