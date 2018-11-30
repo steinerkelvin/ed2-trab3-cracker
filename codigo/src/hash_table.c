@@ -1,13 +1,17 @@
 #include "hash_table.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <assert.h>
+#include "symbol.h"
 #include "util.h"
 #include "avl.h"
 #include "key.h"
 
 HashTable* HT_create() {
     HashTable* hs = malloc(sizeof(HashTable));
+    assert(hs);
     hs->table = malloc(sizeof(AVL*) * HT_SIZE);
+    assert(hs->table);
     for (int i = 0; i < HT_SIZE; i++) {
         hs->table[i] = NULL;
     }
@@ -16,6 +20,10 @@ HashTable* HT_create() {
 }
 
 void HT_destroy(HashTable* hs) {
+    assert(hs);
+    for (int i = 0; i < HT_SIZE; i++) {
+        avl_free(hs->table[i]);;
+    }
     free(hs->table);
     free(hs);
 }
@@ -30,14 +38,19 @@ static uint_t Key_hash_adler(const Key* k) {
     return ((s2 << 16) | s1) % HT_SIZE;
 }
 
-void HT_insert(HashTable* hs, const Key* k, int n) {
+void HT_insert(HashTable* hs, const Key* k, Item item) {
     uint_t hash = Key_hash_adler(k);
     hs->nItems++;
-    avl_insert(&hs->table[hash], *k, n);
+    avl_insert(&(hs->table[hash]), k, item);
 }
 
-int HT_get(HashTable* hs, const Key* k) {
+int HT_get(HashTable* hs, const Key* k, Item* ret) {
     uint_t hash = Key_hash_adler(k);
     AVL* avl = avl_search(hs->table[hash], k);
-    return (avl) ? avl->n : -1;
+    if (avl == NULL)
+        return 0;
+    else {
+        (*ret) = avl->item;
+        return 1;
+    }
 }

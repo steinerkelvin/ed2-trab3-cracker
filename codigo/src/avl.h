@@ -1,15 +1,17 @@
 #ifndef AVL_H
 #define AVL_H
 
-// AVL para o tipo Key.
-
+#include "symbol.h"
 #include "key.h"
+
+// AVL para o tipo Key.
 
 typedef struct avl AVL;
 
-struct avl{
+struct avl {
     Key k;
-    int n;
+    Item item;
+
     int b;
     AVL* left;
     AVL* right;
@@ -19,7 +21,7 @@ AVL* avl_search(AVL* b, const Key* k);
 
 int avl_height(AVL* tree);
 
-int avl_insert(AVL** tree, Key k, int num);
+int avl_insert(AVL** tree, const Key* k, Item item);
 
 void avl_print(AVL* tree);
 

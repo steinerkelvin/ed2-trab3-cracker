@@ -26,15 +26,15 @@ int avl_height(AVL* tree){
 	return -1;
 }
 
-int balancing(AVL* tree){
-    return labs(avl_height(tree->left)-avl_height(tree->right));
+static int balancing(AVL* tree){
+    return labs(avl_height(tree->left) - avl_height(tree->right));
 }
 
 static int max(int x, int y){
     return ((x > y) ? x : y);
 }
 
-void rotateLeft(AVL** tree){
+static void rotateLeft(AVL** tree){
     AVL* temp = (*tree)->left;
     (*tree)->left = temp->right;
     temp->right = *tree;
@@ -43,7 +43,7 @@ void rotateLeft(AVL** tree){
     *tree = temp;
 }
 
-void rotateRight(AVL** tree){
+static void rotateRight(AVL** tree){
     AVL* temp = (*tree)->right;
     (*tree)->right = temp->left;
     temp->left = (*tree);
@@ -52,21 +52,21 @@ void rotateRight(AVL** tree){
     *tree = temp;
 }
 
-void rotateRL(AVL** tree){
+static void rotateRL(AVL** tree){
     rotateLeft(&((*tree)->right));
     rotateRight(tree);
 }
 
-void rotateLR(AVL** tree){
+static void rotateLR(AVL** tree){
     rotateRight(&((*tree)->left));
     rotateLeft(tree);
 }
 
-int avl_insert(AVL** tree, Key k, int num){
+int avl_insert(AVL** tree, const Key* key, Item item){
     if(!(*tree)){
         AVL* aux = malloc(sizeof(AVL));
-        aux->k = k;
-        aux->n = num;
+        aux->k = *key;
+        aux->item = item;
         aux->b = 0;
         aux->left = aux->right = NULL;
         (*tree) = aux;
@@ -75,18 +75,18 @@ int avl_insert(AVL** tree, Key k, int num){
 
     int res;
     AVL* temp = (*tree);
-    if(Key_compare(&k, &temp->k) < 0){
-        if((res = avl_insert((&(temp->left)), k, num)) == 1)
+    if(Key_compare(key, &temp->k) < 0){
+        if((res = avl_insert((&(temp->left)), key, item)) == 1)
             if(balancing(temp) >= 2) {
-                if( Key_compare(&k, &temp->left->k ) < 0 )
+                if( Key_compare(key, &temp->left->k ) < 0 )
                     rotateLeft(tree);
                 else
                     rotateLR(tree);
             }
     } else {
-        if((res = avl_insert((&(temp->right)), k, num)) == 1)
+        if((res = avl_insert((&(temp->right)), key, item)) == 1)
             if(balancing(temp) >= 2) {
-                if( Key_compare(&k, &temp->right->k ) >= 0 )
+                if( Key_compare(key, &temp->right->k ) >= 0 )
                     rotateRight(tree);
                 else
                     rotateRL(tree);
@@ -98,15 +98,15 @@ int avl_insert(AVL** tree, Key k, int num){
     return res;
 }
 
-void avl_print(AVL* tree){
-    printf("(");
-    if(tree) {
-        printf("%d ", tree->n);
-        avl_print(tree->left);
-        avl_print(tree->right);
-    }
-    printf(")");
-}
+// void avl_print(AVL* tree){
+//     printf("(");
+//     if(tree) {
+//         printf("%d ", tree->item);
+//         avl_print(tree->left);
+//         avl_print(tree->right);
+//     }
+//     printf(")");
+// }
 
 void avl_free(AVL* a){
     if (a == NULL) return;
