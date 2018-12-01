@@ -25,6 +25,6 @@ int avl_insert(AVL** tree, const Key* k, Item item);
 
 void avl_print(AVL* tree);
 
-void avl_free(AVL* a);
+void avl_destroy(AVL* a, cb_item_t cb_destroy);
 
 #endif

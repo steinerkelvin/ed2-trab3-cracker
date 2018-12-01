@@ -108,9 +108,11 @@ int avl_insert(AVL** tree, const Key* key, Item item){
 //     printf(")");
 // }
 
-void avl_free(AVL* a){
-    if (a == NULL) return;
-    avl_free(a->left);
-    avl_free(a->right);
-    free(a);
+void avl_destroy(AVL* node, cb_item_t cb_destroy){
+    if (node == NULL) return;
+    avl_destroy(node->left, cb_destroy);
+    avl_destroy(node->right, cb_destroy);
+    if (cb_destroy != NULL)
+        cb_destroy(node->item);
+    free(node);
 }

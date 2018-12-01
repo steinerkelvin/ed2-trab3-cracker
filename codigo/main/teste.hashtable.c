@@ -40,7 +40,7 @@ int main(){
         *re
     );
 
-    HT_destroy(hs);
+    HT_destroy(hs, NULL);
 
     return 0;
 }

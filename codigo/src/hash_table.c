@@ -16,10 +16,10 @@ HashTable* HT_create() {
     return hs;
 }
 
-void HT_destroy(HashTable* hs) {
+void HT_destroy(HashTable* hs, cb_item_t cb_destroy) {
     assert(hs);
     for (int i = 0; i < HT_SIZE; i++) {
-        avl_free(hs->table[i]);;
+        avl_destroy(hs->table[i], cb_destroy);
     }
     free(hs->table);
     free(hs);

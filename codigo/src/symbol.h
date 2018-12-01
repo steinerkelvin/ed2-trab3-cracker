@@ -7,4 +7,7 @@
 
 typedef ST_ITEM_TYPE* Item;
 
+// unary callback for Item type
+typedef void (*cb_item_t)(Item);
+
 #endif // SYMBOL_H

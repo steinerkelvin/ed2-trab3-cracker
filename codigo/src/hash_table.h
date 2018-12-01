@@ -15,7 +15,7 @@ typedef struct hash_table {
 
 HashTable* HT_create();
 
-void HT_destroy(HashTable* hs);
+void HT_destroy(HashTable* hs, cb_item_t cb_destroy);
 
 void HT_insert(HashTable* hs, const Key* k, Item item);
 
