@@ -41,7 +41,7 @@ void HT_insert(HashTable* hs, const Key* k, Item item) {
     avl_insert(&(hs->table[hash]), k, item);
 }
 
-int HT_get(HashTable* hs, const Key* k, Item* ret) {
+bool HT_get(const HashTable* hs, const Key* k, Item* ret) {
     uint_t hash = Key_hash_adler(k);
     AVL* avl = avl_search(hs->table[hash], k);
     if (avl == NULL)

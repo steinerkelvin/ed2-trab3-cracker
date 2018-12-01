@@ -3,7 +3,7 @@
 
 #include <stdbool.h>
 
-#define C 5          // Número de caracteres na senha.
+#define C 6          // Número de caracteres na senha.
 #define B 5          // Número de bits por caractere.
 #define R (1 << B)   // Tamanho do alfabeto (sempre = 32).
 #define N (B * C)    // Número de bits por senha.
@@ -49,6 +49,8 @@ int Key_compare(const Key* a, const Key* b);
 bool Key_isEqual(const Key *k1, const Key *k2);
 
 void Key_add(Key *res, const Key *a, const Key *b);
+
+void Key_sub(Key *res, const Key *a, const Key *b);
 
 
 #endif

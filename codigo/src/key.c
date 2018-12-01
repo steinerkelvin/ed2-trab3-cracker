@@ -122,3 +122,13 @@ void Key_add(Key *res, const Key *a, const Key *b) {
     }
 }
 
+static inline int modR(const int num) { return ((num % R + R) % R); };
+
+void Key_sub(Key *res, const Key *a, const Key *b) {
+    int carry = 0;
+    for (int i = C-1; i >= 0; i--) {
+        int sum       = a->digit[i] - b->digit[i] - carry;
+        res->digit[i] = modR(sum);
+        carry         = (sum < 0);
+    }
+}

@@ -20,7 +20,7 @@ void executa(const Key in) {
         );
         if (dp == C) {
             if (Key_isEqual(&stackSum[dp], &in))
-                print_key(stackPos);
+                print_key_char(stackPos);
             
             while ( dp && (++stackPos.digit[dp-1]) == R ) {
                 stackPos.digit[dp-1] = 0;

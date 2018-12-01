@@ -1,6 +1,7 @@
 #ifndef HASH_TABLE_H
 #define HASH_TABLE_H
 
+#include <stdbool.h>
 #include "symbol.h"
 #include "key.h"
 #include "avl.h"
@@ -19,7 +20,7 @@ void HT_destroy(HashTable* hs, cb_item_t cb_destroy);
 
 void HT_insert(HashTable* hs, const Key* k, Item item);
 
-int HT_get(HashTable* hs, const Key* k, Item* ret);
+bool HT_get(const HashTable* hs, const Key* k, Item* ret);
 
 
 #endif // HASH_TABLE_H
