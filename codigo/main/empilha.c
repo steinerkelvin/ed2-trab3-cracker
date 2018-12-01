@@ -32,7 +32,8 @@ void executa(const Key in) {
     }
 }
 
-int main(int argc, char** argv) {
+int main(int argc, char* argv[]) {
+    check_decrypt_params(argc, argv);
 
 	Key table[N];
 	for (int i = 0; i < N; i++) {

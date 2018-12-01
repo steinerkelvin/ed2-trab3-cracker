@@ -4,7 +4,8 @@
 #include "util.h"
 #include "key.h"
 
-int main(int argc, char** argv) {
+int main(int argc, char* argv[]) {
+	check_decrypt_params(argc, argv);
 
 	Key table[N];
 	for (int i = 0; i < N; i++) {
@@ -15,13 +16,15 @@ int main(int argc, char** argv) {
 
 	Key in = init_key((uchar_t*) argv[1]);
 
-	for (Key key = {{0}}; !Key_isMax(&key); Key_inc(&key)) {
+	for (Key key = {{0}}; ; Key_inc(&key)) {
 
         Key sum = subset_sum(key, table);
 		if (Key_compare(&sum, &in) == 0) {
 			print_key_char(key);
 		}
 
+		if (Key_isMax(&key))
+			break;
 	}
 
 	return 0;
