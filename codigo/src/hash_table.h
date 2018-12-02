@@ -22,5 +22,7 @@ void HT_insert(HashTable* hs, const Key* k, Item item);
 
 bool HT_get(const HashTable* hs, const Key* k, Item* ret);
 
+Item* HT_getOrAdd(HashTable* hs, Key* k);
+
 
 #endif // HASH_TABLE_H

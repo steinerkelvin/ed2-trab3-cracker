@@ -116,3 +116,45 @@ void avl_destroy(AVL* node, cb_item_t cb_destroy){
         cb_destroy(node->item);
     free(node);
 }
+
+int avl_search_or_add(AVL** tree, const Key* key, Item* item){
+    if(!(*tree)){
+        AVL* aux = malloc(sizeof(AVL));
+        aux->k = *key;
+        item = &(aux->item); // <<<<<<<<<<<<< O PONTEIRO PRA ITEM PASSADO COMO ARGUMENTO APONTA PARA O NOVO ITEM CRIADO;
+        aux->b = 0;
+        aux->left = aux->right = NULL;
+        (*tree) = aux;
+        return 1;
+    }
+
+    int res;
+    AVL* temp = (*tree);
+	if(Key_compare(key, &temp->k) == 0) {
+		item = &(temp->item); // <<<<<<<<<<<< O PONTEIRO PRA ITEM APONTA PARA O ITEM JÁ EXISTENTE NA TABELA;
+		return -1; // <<<<<<<<<<<<<<<<<<<<<<< PARA CONTROLE DO FATOR DE BALANCEAMENTO;
+	}
+		
+    if(Key_compare(key, &temp->k) < 0){
+        if((res = avl_insert((&(temp->left)), key, item)) == 1)
+            if(balancing(temp) >= 2) {
+                if( Key_compare(key, &temp->left->k ) < 0 )
+                    rotateLeft(tree);
+                else
+                    rotateLR(tree);
+            }
+  	}else{
+        if((res = avl_insert((&(temp->right)), key, item)) == 1)
+            if(balancing(temp) >= 2) {
+                if( Key_compare(key, &temp->right->k ) >= 0 )
+                    rotateRight(tree);
+                else
+                   	rotateRL(tree);
+            }
+    }
+
+	if (res == -1) return res; // <<< PARA PULAR O INCREMENTO DO FATOR BALANCEAMENTO E NAO DESCONFIGURAR TODA A ARVORE;
+    temp->b = max( avl_height(temp->left), avl_height(temp->right) ) + 1;
+
+    return res;
+}

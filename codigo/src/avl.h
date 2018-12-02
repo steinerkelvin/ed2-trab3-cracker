@@ -27,4 +27,7 @@ void avl_print(AVL* tree);
 
 void avl_destroy(AVL* a, cb_item_t cb_destroy);
 
+// FUNCAO NOVA: AO FINAL, item APONTA PARA UM NOVO ITEM VAZIO OU PARA UM ITEM JÁ EXISTENTE ANTERIORMENTE; 
+int avl_search_or_add(AVL** tree, const Key* key, Item* item);
+
 #endif
