@@ -11,11 +11,11 @@
 int main(){
     HashTable* hs = HT_create();
 
-    Key a = init_key((uchar_t*)"kaaaaaaaaaaa");
-    Key b = init_key((uchar_t*)"aaaaaaaaaaab");
-    Key c = init_key((uchar_t*)"jaaaaaaaaaac");
-    Key d = init_key((uchar_t*)"aaaaaaaaaaak");
-    Key e = init_key((uchar_t*)"aaaaaaaaaaal");
+    Key a = init_key((uchar_t*)"baaaaaaaaaaa");
+    Key b = init_key((uchar_t*)"caaaaaaaaaaa");
+    Key c = init_key((uchar_t*)"daaaaaaaaaaa");
+    Key d = init_key((uchar_t*)"eaaaaaaaaaaa");
+    Key e = init_key((uchar_t*)"faaaaaaaaaaa");
 
     HT_insert(hs, &a, &(int){1});
     HT_insert(hs, &b, &(int){2});

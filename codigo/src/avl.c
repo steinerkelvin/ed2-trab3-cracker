@@ -7,34 +7,33 @@
 
 // AVL modificada para ser usada na hashtable para o tipo Key.
 
-AVL* avl_search(AVL* b, const Key* k) {
-    if (b == NULL)
+AVL* avl_search(AVL* tree, const Key* k) {
+    if (tree == NULL)
         return NULL;
-    int diff = Key_compare(k, &b->k);
+    int diff = Key_compare(k, &tree->k);
     if (diff == 0)
-        return b;
+        return tree;
     if (diff > 0)
-        return avl_search(b->right, k);
+        return avl_search(tree->right, k);
     else
-        return avl_search(b->left, k);
+        return avl_search(tree->left, k);
 }
 
 int avl_height(AVL* tree){
-    if(tree){
-	   return tree->b;
-    }
-	return -1;
+    if (tree == NULL) return -1;
+    return tree->b;
 }
 
 static int balancing(AVL* tree){
-    return labs(avl_height(tree->left) - avl_height(tree->right));
+    if (tree == NULL) return 0;
+    return avl_height(tree->left) - avl_height(tree->right);
 }
 
 static int max(int x, int y){
     return ((x > y) ? x : y);
 }
 
-static void rotateLeft(AVL** tree){
+static void rotateRight(AVL** tree){
     AVL* temp = (*tree)->left;
     (*tree)->left = temp->right;
     temp->right = *tree;
@@ -43,7 +42,7 @@ static void rotateLeft(AVL** tree){
     *tree = temp;
 }
 
-static void rotateRight(AVL** tree){
+static void rotateLeft(AVL** tree){
     AVL* temp = (*tree)->right;
     (*tree)->right = temp->left;
     temp->left = (*tree);
@@ -53,13 +52,13 @@ static void rotateRight(AVL** tree){
 }
 
 static void rotateRL(AVL** tree){
-    rotateLeft(&((*tree)->right));
-    rotateRight(tree);
+    rotateRight(&((*tree)->right));
+    rotateLeft(tree);
 }
 
 static void rotateLR(AVL** tree){
-    rotateRight(&((*tree)->left));
-    rotateLeft(tree);
+    rotateLeft(&((*tree)->left));
+    rotateRight(tree);
 }
 
 int avl_insert(AVL** tree, const Key* key, Item item){
@@ -73,13 +72,13 @@ int avl_insert(AVL** tree, const Key* key, Item item){
         return 1;
     }
 
-    int res;
+    int res = 0;
     AVL* temp = (*tree);
     if(Key_compare(key, &temp->k) < 0){
         if((res = avl_insert((&(temp->left)), key, item)) == 1)
             if(balancing(temp) >= 2) {
                 if( Key_compare(key, &temp->left->k ) < 0 )
-                    rotateLeft(tree);
+                    rotateRight(tree);
                 else
                     rotateLR(tree);
             }
@@ -87,7 +86,7 @@ int avl_insert(AVL** tree, const Key* key, Item item){
         if((res = avl_insert((&(temp->right)), key, item)) == 1)
             if(balancing(temp) >= 2) {
                 if( Key_compare(key, &temp->right->k ) >= 0 )
-                    rotateRight(tree);
+                    rotateLeft(tree);
                 else
                     rotateRL(tree);
             }
@@ -117,44 +116,45 @@ void avl_destroy(AVL* node, cb_item_t cb_destroy){
     free(node);
 }
 
-int avl_search_or_add(AVL** tree, const Key* key, Item* item){
+// Busca ou cria um nó para uma dada chave
+// param:  
+//   [saida] ret -> retorna ponteiro para o item
+// retorna: se houve inserção
+bool avl_get_or_add(AVL** tree, const Key* key, Item** ret){
     if(!(*tree)){
         AVL* aux = malloc(sizeof(AVL));
         aux->k = *key;
-        item = &(aux->item); // <<<<<<<<<<<<< O PONTEIRO PRA ITEM PASSADO COMO ARGUMENTO APONTA PARA O NOVO ITEM CRIADO;
+        aux->item = Item_NULL;
+        (*ret) = &(aux->item);
         aux->b = 0;
         aux->left = aux->right = NULL;
         (*tree) = aux;
-        return 1;
+        return true;
     }
 
-    int res;
     AVL* temp = (*tree);
-	if(Key_compare(key, &temp->k) == 0) {
-		item = &(temp->item); // <<<<<<<<<<<< O PONTEIRO PRA ITEM APONTA PARA O ITEM JÁ EXISTENTE NA TABELA;
-		return -1; // <<<<<<<<<<<<<<<<<<<<<<< PARA CONTROLE DO FATOR DE BALANCEAMENTO;
+    int diff = Key_compare(key, &temp->k);
+	if(diff == 0) {
+		(*ret) = &(temp->item);
+		return false;
 	}
-		
-    if(Key_compare(key, &temp->k) < 0){
-        if((res = avl_insert((&(temp->left)), key, item)) == 1)
-            if(balancing(temp) >= 2) {
-                if( Key_compare(key, &temp->left->k ) < 0 )
-                    rotateLeft(tree);
-                else
-                    rotateLR(tree);
-            }
-  	}else{
-        if((res = avl_insert((&(temp->right)), key, item)) == 1)
-            if(balancing(temp) >= 2) {
-                if( Key_compare(key, &temp->right->k ) >= 0 )
-                    rotateRight(tree);
-                else
-                   	rotateRL(tree);
-            }
+
+    AVL** child = (diff < 0) ? (&(temp->left)) : (&(temp->right));
+    const bool ins = avl_get_or_add(child, key, ret);
+    if (ins) {
+        const int bal = balancing(temp);
+        if (bal > 1) {
+            int lbal = balancing(temp->left);
+            if      (lbal > 0) rotateRight(tree);
+            else if (lbal < 0) rotateLR(tree);
+        } else if (bal < -1) {
+            int rbal = balancing(temp->right);
+            if      (rbal < 0)  rotateLeft(tree);
+            else if (rbal > 0)  rotateRL(tree);
+        }
+
+        temp->b = max( avl_height(temp->left), avl_height(temp->right) ) + 1;
     }
 
-	if (res == -1) return res; // <<< PARA PULAR O INCREMENTO DO FATOR BALANCEAMENTO E NAO DESCONFIGURAR TODA A ARVORE;
-    temp->b = max( avl_height(temp->left), avl_height(temp->right) ) + 1;
-
-    return res;
+    return ins;
 }

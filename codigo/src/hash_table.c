@@ -55,7 +55,7 @@ bool HT_get(const HashTable* hs, const Key* k, Item* ret) {
 Item* HT_getOrAdd(HashTable* hs, Key* k) {
 	uint_t hash = Key_hash_adler(k);
 	Item* item;
-	int r = avl_search_or_add(hs->table[hash], k, item);
-	if (r != -1) hs->nItems++;
+	if (avl_get_or_add(&(hs->table[hash]), k, &item))
+        hs->nItems++;
 	return item;
 }
