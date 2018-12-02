@@ -46,6 +46,7 @@ int main(int argc, char* argv[]) {
     int p_st = pc;
     int c_st = MIN(MAXC_ST, (C-pc)-1);
 
+    int sobreescritas = 0;
     HashTable* map = HT_create();
     {
         pc += c_st;
@@ -58,8 +59,13 @@ int main(int argc, char* argv[]) {
 
             Key sum = perDigitTable_sum(perDigitTable, &key);
 
-            Item value = st_key_create(&key.digit[p_st], c_st);
-            HT_insert(map, &sum, value);
+            Item *pvalue;
+            bool ins = HT_getOrAdd(map, &sum, &pvalue);
+            if (ins) {
+                *pvalue = st_key_create(&key.digit[p_st], c_st);
+            } else {
+                sobreescritas++;
+            }
 
             if (Key_isMaxFrom(&key, p_st, lstc))
                 break;
@@ -67,6 +73,7 @@ int main(int argc, char* argv[]) {
     }
 
     fprintf(stderr, "hashmap size: %d\n", map->nItems);
+    fprintf(stderr, "chaves sobreescritas: %d\n", sobreescritas);
 
     {
         int p_br = pc;
@@ -81,7 +88,7 @@ int main(int argc, char* argv[]) {
             Key needed; Key_sub(&needed, &target, &partial);
 
             Item rest;
-            bool has = HT_get(map, &needed, &rest);
+            bool has = HT_search(map, &needed, &rest);
             if (has) {
                 Key k = key;
                 for (int i = 0; i < c_st; i++)

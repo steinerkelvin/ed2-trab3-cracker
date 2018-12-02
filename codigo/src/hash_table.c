@@ -35,27 +35,20 @@ static uint_t Key_hash_adler(const Key* k) {
     return ((s2 << 16) | s1) % HT_SIZE;
 }
 
-void HT_insert(HashTable* hs, const Key* k, Item item) {
-    uint_t hash = Key_hash_adler(k);
-    hs->nItems++;
-    avl_insert(&(hs->table[hash]), k, item);
-}
 
-bool HT_get(const HashTable* hs, const Key* k, Item* ret) {
+bool HT_search(const HashTable* hs, const Key* k, Item* ret) {
     uint_t hash = Key_hash_adler(k);
     AVL* avl = avl_search(hs->table[hash], k);
     if (avl == NULL)
-        return 0;
-    else {
-        (*ret) = avl->item;
-        return 1;
-    }
+        return false;
+    (*ret) = avl->item;
+    return true;
 }
 
-Item* HT_getOrAdd(HashTable* hs, Key* k) {
+bool HT_getOrAdd(HashTable* hs, const Key* k, Item** ret) {
 	uint_t hash = Key_hash_adler(k);
-	Item* item;
-	if (avl_get_or_add(&(hs->table[hash]), k, &item))
+    const bool ins = avl_get_or_add(&(hs->table[hash]), k, ret);
+	if (ins)
         hs->nItems++;
-	return item;
+    return ins;
 }

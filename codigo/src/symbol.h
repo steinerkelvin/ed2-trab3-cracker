@@ -5,10 +5,10 @@
 #define ST_ITEM_TYPE void
 #endif
 
-// Um item da tabela sempre é um ponteiro  
+// Um valor da tabela sempre é um ponteiro  
 // O tipo do ponteiro pode ser ajustado nos arquivos que incluem os cabeçalhos
-// da tabela ajustando a macro ST_ITEM_TYPE, permitindo checagem de tipo, de
-// outro modo o ponteiro é genérico
+// da tabela setando previamente a macro ST_ITEM_TYPE para permitir a checagem
+// de tipo, de outro modo o ponteiro é genérico
 
 typedef ST_ITEM_TYPE* Item;
 

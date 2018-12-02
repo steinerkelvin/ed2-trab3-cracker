@@ -89,4 +89,6 @@ int main() {
     printTree(avl);
     printOrder(avl);
 
+    avl_destroy(avl, (cb_item_t)free);
+
 }

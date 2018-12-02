@@ -13,22 +13,27 @@ struct avl {
     Key k;
     Item item;
 
-    int b;
+    int b;  //? mudar de nome ?
     AVL* left;
     AVL* right;
 };
 
-AVL* avl_search(AVL* tree, const Key* k);
-
-int avl_height(AVL* tree);
-
-int avl_insert(AVL** tree, const Key* k, Item item); // TODO remover
-
-// void avl_print(AVL* tree);
+// TODO comentar
 
 void avl_destroy(AVL* a, cb_item_t cb_destroy);
 
-// FUNCAO NOVA: AO FINAL, item APONTA PARA UM NOVO ITEM VAZIO OU PARA UM ITEM JÁ EXISTENTE ANTERIORMENTE; 
+int avl_height(const AVL* tree);
+
+AVL* avl_search(AVL* tree, const Key* k);
+
+// void avl_print(AVL* tree);
+
+/** Busca ou cria um nó para uma dada chave
+ * parametros:  
+ *   key -> chave a ser buscada
+ *   ret -> [retorna] ponteiro para o item
+ * retorna: se houve inserção
+ */
 bool avl_get_or_add(AVL** tree, const Key* key, Item** ret);
 
 #endif

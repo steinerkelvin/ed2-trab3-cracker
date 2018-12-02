@@ -18,11 +18,22 @@ HashTable* HT_create();
 
 void HT_destroy(HashTable* hs, cb_item_t cb_destroy);
 
-void HT_insert(HashTable* hs, const Key* k, Item item);
+/**
+ * Busca um entrada na tabela para uma dada chave
+ * parametros:
+ *   ret -> [retorna] o valor armazenado
+ * retorna: se encontrou
+ */
+bool HT_search(const HashTable* hs, const Key* k, Item* ret);
 
-bool HT_get(const HashTable* hs, const Key* k, Item* ret);
-
-Item* HT_getOrAdd(HashTable* hs, Key* k);
+/**
+ * Busca ou cria um entrada na tabela para uma dada chave
+ * parametros:  
+ *   key -> chave a ser buscada
+ *   ret -> [retorna] ponteiro para o valor armazenado
+ * retorna: se houve inserção
+ */
+bool HT_getOrAdd(HashTable* hs, const Key* k, Item** ret);
 
 
 #endif // HASH_TABLE_H
