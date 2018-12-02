@@ -31,22 +31,18 @@ clean:
 	rm -f -r ./build
 	rm -f -r ./bin
 
-# Cria uma pasta
-%/:
-	mkdir -p $@
-
 
 # Compila bibliotecas de src/ para build/
-build/%.o: src/%.c | build/  $(dir .dep/src/%)/
+build/%.o: src/%.c
+	@ mkdir -p $(dir $@) $(dir .dep/$@)
 	$(CC) -o $@  -c $<  $(CFLAGS)
-	
-	@ $(CC) -MM -MT $@  $< $(CFLAGS)  > .dep/$<.d
+	@ $(CC) -MM -MT $@  $< $(CFLAGS)  > .dep/$@.d
 
 # Compila de main/ para para bin/
-bin/%: main/%.c $(OBJS) | bin/  $(dir .dep/main/%)/
+bin/%: main/%.c $(OBJS)
+	@ mkdir -p $(dir $@) $(dir .dep/$@)
 	$(CC) -o $@  -I "./src/" $^  $(CFLAGS)
-	
-	@ $(CC) -I "./src/" -MM -MT $@  $< $(CFLAGS)  > .dep/$<.d
+	@ $(CC) -MM -MT $@  $< $(CFLAGS) -I "./src/"  > .dep/$@.d
 
 
 # Inclui as listas de dependências
