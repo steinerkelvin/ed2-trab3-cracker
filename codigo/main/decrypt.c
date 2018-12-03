@@ -10,7 +10,6 @@
 #include "per_digit.h"
 #include "hash_table.h"
 
-#define MAXC_ST 4
 
 Key perDigitTable[C][R];
 
