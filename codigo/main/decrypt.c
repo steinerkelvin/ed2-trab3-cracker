@@ -6,14 +6,13 @@
 
 #define VALUE_PTR_TYPE uchar_t
 #define VALUE_NULL NULL
-#define MAXC_TABLE 4
-#define HT_SIZE 2097143
+#define C_TABLE 4       // 5
+#define HT_SIZE 2097143 // 33554393
 
 #include "table.h"
 #include "key.h"
 #include "per_digit.h"
 #include "hash_table.h"
-
 
 Key perDigitTable[C][R];
 
@@ -25,7 +24,7 @@ bool Key_isMaxFrom(const Key *k, const int lo, const int hi) {
     return 1;
 }
 
-uchar_t* st_key_create(const uchar_t* key, const int size) {
+uchar_t* value_create(const uchar_t* key, const int size) {
     uchar_t* p = malloc(sizeof(uchar_t) * size);
     for (int i = 0; i < size; i ++) {
         p[i] = key[i];
@@ -47,13 +46,13 @@ int main(int argc, char* argv[]) {
 
     int pc = 0;
     int p_st = pc;
-    int c_st = MIN(MAXC_TABLE, (C-pc)-1);
+    int c_st = C_TABLE; // MIN(MAXC_TABLE, (C-pc)-1);
 
     int sobreescritas = 0;
     HashTable* map = HT_create();
     {
         pc += c_st;
-        const int lstc = p_st + c_st - 1;
+        const int lstc = p_st + c_st - 1; // 3
 
         Key one = {{0}};
         one.digit[lstc] = 1;
@@ -65,7 +64,7 @@ int main(int argc, char* argv[]) {
             Value *pvalue;
             bool ins = HT_getOrAdd(map, &sum, &pvalue);
             if (ins) {
-                *pvalue = st_key_create(&key.digit[p_st], c_st);
+                *pvalue = value_create(&key.digit[p_st], c_st);
             } else {
                 sobreescritas++;
             }

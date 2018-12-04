@@ -8,12 +8,14 @@
 #define R (1 << B)   // Tamanho do alfabeto (sempre = 32).
 #define N (B * C)    // Número de bits por senha.
 
+#define C_TABLE 4
+
 #define ALPHABET "abcdefghijklmnopqrstuvwxyz012345"
 
 // Um inteiro módulo R formado por C dígitos. O array está contido
 // dentro de uma estrutura para facilitar a gerência de memória e
 // a passagem de parâmetros nas funções.
-typedef struct {
+typedef struct key {
     unsigned char digit[C];
 } Key;
 
