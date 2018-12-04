@@ -12,11 +12,11 @@ HashTable* HT_create() {
     for (int i = 0; i < HT_SIZE; i++) {
         hs->table[i] = NULL;
     }
-    hs->nItems = 0;
+    hs->numItems = 0;
     return hs;
 }
 
-void HT_destroy(HashTable* hs, cb_item_t cb_destroy) {
+void HT_destroy(HashTable* hs, cb_value_t cb_destroy) {
     assert(hs);
     for (int i = 0; i < HT_SIZE; i++) {
         avl_destroy(hs->table[i], cb_destroy);
@@ -36,7 +36,7 @@ static uint_t Key_hash_adler(const Key* k) {
 }
 
 
-bool HT_search(const HashTable* hs, const Key* k, Item* ret) {
+bool HT_search(const HashTable* hs, const Key* k, Value* ret) {
     uint_t hash = Key_hash_adler(k);
     AVL* avl = avl_search(hs->table[hash], k);
     if (avl == NULL)
@@ -45,10 +45,10 @@ bool HT_search(const HashTable* hs, const Key* k, Item* ret) {
     return true;
 }
 
-bool HT_getOrAdd(HashTable* hs, const Key* k, Item** ret) {
+bool HT_getOrAdd(HashTable* hs, const Key* k, Value** ret) {
 	uint_t hash = Key_hash_adler(k);
     const bool ins = avl_get_or_add(&(hs->table[hash]), k, ret);
 	if (ins)
-        hs->nItems++;
+        hs->numItems++;
     return ins;
 }

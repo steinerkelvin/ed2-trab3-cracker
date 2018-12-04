@@ -3,8 +3,8 @@
 #include <string.h>
 #include <assert.h>
 
-#define ST_ITEM_TYPE int
-#include "symbol.h"
+#define VALUE_PTR_TYPE int
+#include "table.h"
 #include "util.h"
 #include "key.h"
 #include "hash_table.h"
@@ -26,13 +26,14 @@ int main(){
     Key n = init_key((uchar_t*)"notaaaaaaaaa");
 
     int **val;
-    assert( HT_getOrAdd(hs, &a, &val) ); *val = alloc_int(1);
-    assert( HT_getOrAdd(hs, &b, &val) ); *val = alloc_int(2);
-    assert( HT_getOrAdd(hs, &c, &val) ); *val = alloc_int(3);
-    assert( HT_getOrAdd(hs, &d, &val) ); *val = alloc_int(4);
-    assert( HT_getOrAdd(hs, &e, &val) ); *val = alloc_int(5);
+    bool ins;
+    ins = HT_getOrAdd(hs, &a, &val); assert(ins); *val = alloc_int(1);
+    ins = HT_getOrAdd(hs, &b, &val); assert(ins); *val = alloc_int(2);
+    ins = HT_getOrAdd(hs, &c, &val); assert(ins); *val = alloc_int(3);
+    ins = HT_getOrAdd(hs, &d, &val); assert(ins); *val = alloc_int(4);
+    ins = HT_getOrAdd(hs, &e, &val); assert(ins); *val = alloc_int(5);
 
-    assert(!HT_getOrAdd(hs, &c, &val) ); assert( **val == 3 );
+    ins = HT_getOrAdd(hs, &c, &val); assert(!ins); assert( **val == 3 );
 
     int df = -1;
     int *ra = &df; assert( HT_search(hs, &a, &ra) );
@@ -51,7 +52,7 @@ int main(){
         *rn
     );
 
-    HT_destroy(hs, (cb_item_t)free);
+    HT_destroy(hs, (cb_value_t)free);
 
     return 0;
 }

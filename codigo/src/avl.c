@@ -8,7 +8,7 @@
 
 // AVL modificada para ser usada na hashtable para o tipo Key.
 
-void avl_destroy(AVL* node, cb_item_t cb_destroy){
+void avl_destroy(AVL* node, cb_value_t cb_destroy){
     if (node == NULL) return;
     avl_destroy(node->left, cb_destroy);
     avl_destroy(node->right, cb_destroy);
@@ -19,7 +19,7 @@ void avl_destroy(AVL* node, cb_item_t cb_destroy){
 
 int avl_height(const AVL* tree){
     if (tree == NULL) return -1;
-    return tree->b;
+    return tree->height;
 }
 
 AVL* avl_search(AVL* tree, const Key* k) {
@@ -38,8 +38,8 @@ static void rotateRight(AVL** tree){
     AVL* temp = (*tree)->left;
     (*tree)->left = temp->right;
     temp->right = *tree;
-    (*tree)->b = MAX(avl_height((*tree)->left), avl_height((*tree)->right)) + 1;
-    temp->b = MAX(avl_height(temp->left), (*tree)->b) + 1;
+    (*tree)->height = MAX(avl_height((*tree)->left), avl_height((*tree)->right)) + 1;
+    temp->height = MAX(avl_height(temp->left), (*tree)->height) + 1;
     *tree = temp;
 }
 
@@ -47,8 +47,8 @@ static void rotateLeft(AVL** tree){
     AVL* temp = (*tree)->right;
     (*tree)->right = temp->left;
     temp->left = (*tree);
-    (*tree)->b = MAX(avl_height((*tree)->left),avl_height((*tree)->right)) + 1;
-    temp->b = MAX(avl_height(temp->right), (*tree)->b) + 1;
+    (*tree)->height = MAX(avl_height((*tree)->left),avl_height((*tree)->right)) + 1;
+    temp->height = MAX(avl_height(temp->right), (*tree)->height) + 1;
     *tree = temp;
 }
 
@@ -77,13 +77,13 @@ static inline int balancing(AVL* tree){
     return avl_height(tree->left) - avl_height(tree->right);
 }
 
-bool avl_get_or_add(AVL** tree, const Key* key, Item** ret){
+bool avl_get_or_add(AVL** tree, const Key* key, Value** ret){
     if(!(*tree)){
         AVL* aux = malloc(sizeof(AVL));
         aux->k = *key;
-        aux->item = Item_NULL;
+        aux->item = VALUE_NULL;
         (*ret) = &(aux->item);
-        aux->b = 0;
+        aux->height = 0;
         aux->left = aux->right = NULL;
         (*tree) = aux;
         return true;
@@ -110,7 +110,7 @@ bool avl_get_or_add(AVL** tree, const Key* key, Item** ret){
             else if (rbal > 0)  rotateRL(tree);
         }
 
-        temp->b = MAX( avl_height(temp->left), avl_height(temp->right) ) + 1;
+        temp->height = MAX( avl_height(temp->left), avl_height(temp->right) ) + 1;
     }
 
     return ins;

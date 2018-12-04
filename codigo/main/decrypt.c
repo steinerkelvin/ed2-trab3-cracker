@@ -2,11 +2,15 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <assert.h>
-
-#define ST_ITEM_TYPE uchar_t
-
-#include "key.h"
 #include "util.h"
+
+#define VALUE_PTR_TYPE uchar_t
+#define VALUE_NULL NULL
+#define MAXC_TABLE 4
+#define HT_SIZE 2097143
+
+#include "table.h"
+#include "key.h"
 #include "per_digit.h"
 #include "hash_table.h"
 
@@ -43,7 +47,7 @@ int main(int argc, char* argv[]) {
 
     int pc = 0;
     int p_st = pc;
-    int c_st = MIN(MAXC_ST, (C-pc)-1);
+    int c_st = MIN(MAXC_TABLE, (C-pc)-1);
 
     int sobreescritas = 0;
     HashTable* map = HT_create();
@@ -58,7 +62,7 @@ int main(int argc, char* argv[]) {
 
             Key sum = perDigitTable_sum(perDigitTable, &key);
 
-            Item *pvalue;
+            Value *pvalue;
             bool ins = HT_getOrAdd(map, &sum, &pvalue);
             if (ins) {
                 *pvalue = st_key_create(&key.digit[p_st], c_st);
@@ -71,7 +75,7 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    fprintf(stderr, "hashmap size: %d\n", map->nItems);
+    fprintf(stderr, "hashmap size: %d\n", map->numItems);
     fprintf(stderr, "chaves sobreescritas: %d\n", sobreescritas);
 
     {
@@ -86,7 +90,7 @@ int main(int argc, char* argv[]) {
             Key partial = perDigitTable_sum(perDigitTable, &key);
             Key needed; Key_sub(&needed, &target, &partial);
 
-            Item rest;
+            Value rest;
             bool has = HT_search(map, &needed, &rest);
             if (has) {
                 Key k = key;
@@ -100,7 +104,7 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    HT_destroy(map, (cb_item_t)free);
+    HT_destroy(map, (cb_value_t)free);
 
     return 0;
 }

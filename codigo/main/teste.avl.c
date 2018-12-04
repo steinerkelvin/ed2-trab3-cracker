@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
-#define ST_ITEM_TYPE int
+#define VALUE_PTR_TYPE int
 #include "util.h"
 #include "avl.h"
 
@@ -16,7 +16,7 @@ int printRecur(AVL* node, int dp) {
 
     printf("\n");
     repeatPrint(dp, "    ");
-    printf("<%2d", (node->item != Item_NULL) ? *(node->item) : -1);
+    printf("<%2d", (node->item != VALUE_NULL) ? *(node->item) : -1);
     int ch = 0;
     ch = printRecur(node->left, dp+1) || ch;
     ch = printRecur(node->right, dp+1) || ch;
@@ -37,7 +37,7 @@ void printTree(AVL* node) {
 void printOrderRecur(AVL* node) {\
     if (node == NULL) return;
     printOrderRecur(node->left);
-    if (node->item == Item_NULL) {
+    if (node->item == VALUE_NULL) {
         printf(". ");
     } else {
         printf("%d ", *(node->item));
@@ -89,6 +89,6 @@ int main() {
     printTree(avl);
     printOrder(avl);
 
-    avl_destroy(avl, (cb_item_t)free);
+    avl_destroy(avl, (cb_value_t)free);
 
 }

@@ -122,7 +122,10 @@ void Key_add(Key *res, const Key *a, const Key *b) {
     }
 }
 
-static inline int modR(const int num) { return ((num % R + R) % R); };
+// Operação de módulo (resto) de divisão por R com retorno positivo
+static inline int modR(const int num) {
+    return ((num % R + R) % R);
+}
 
 void Key_sub(Key *res, const Key *a, const Key *b) {
     int carry = 0;

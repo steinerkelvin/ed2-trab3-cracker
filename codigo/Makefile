@@ -2,7 +2,7 @@
 BIN_NAME=trab3
 
 CC= gcc
-CFLAGS= -Wall -g # -D NDEBUG -O2
+CFLAGS= -Wall -g -pedantic # -D NDEBUG -O2
 
 # Arquivos de bibliotecas
 SRCS=$(wildcard src/*.c)

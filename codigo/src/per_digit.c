@@ -10,7 +10,7 @@ void perDigitTable_build(Key perDigitTable[C][R], Key table[N]) {
     }
 }
 
-Key perDigitTable_sum(const Key perDigitTable[C][R], const Key *key) {
+Key perDigitTable_sum(Key perDigitTable[C][R], const Key *key) {
     Key sum = {{0}};
     for (int i = 0; i < C; i++) {
         int d = key->digit[i];
