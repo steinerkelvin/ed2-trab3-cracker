@@ -12,16 +12,18 @@
 
 #define ALPHABET "abcdefghijklmnopqrstuvwxyz012345"
 
+typedef unsigned char Digit;
+
 // Um inteiro módulo R formado por C dígitos. O array está contido
 // dentro de uma estrutura para facilitar a gerência de memória e
 // a passagem de parâmetros nas funções.
 typedef struct key {
-    unsigned char digit[C];
+    Digit digit[C];
 } Key;
 
 // Inicializa e retorna uma chave a partir do vetor de char dado.
 // Exemplo: s = "abcdwxyz"  =>  k = 0 1 2 3 22 23 24 25
-Key init_key(unsigned char s[]);
+Key init_key(Digit s[]);
 
 // Exibe a chave 'k' em stdout em três formatos: chars, ints (base R) e binário.
 void print_key(Key k);

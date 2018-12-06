@@ -10,14 +10,14 @@
 
 #include "key.h"
 
-typedef struct key_part {
-    unsigned char digit[C_TABLE];
-} KeyPart;
 
+void KeyPart_inc(int c, Digit *part);
 
-void KeyPart_inc(KeyPart *part);
+bool KeyPart_isMax(int c, Digit *part);
 
-bool KeyPart_isMax(KeyPart *part);
+Digit* KeyPart_from(int c, int pos, Key *key);
+
+void KeyPart_copyTo(int c, int pos, Digit *part, Key *key);
 
 
 #endif // KEY_PART_H
