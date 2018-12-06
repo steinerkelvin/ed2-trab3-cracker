@@ -11,18 +11,19 @@
 
 #include "table.h"
 #include "key.h"
+#include "key_part.h"
 #include "per_digit.h"
 #include "hash_table.h"
 
 Key perDigitTable[C][R];
 
-bool Key_isMaxFrom(const Key *k, const int lo, const int hi) {
-    for (int i = hi; i >= lo; i--) {
-        if (k->digit[i] != (R-1))
-            return 0;
-    }
-    return 1;
-}
+//bool Key_isMaxFrom(const Key *k, const int lo, const int hi) {
+//    for (int i = hi; i >= lo; i--) {
+//        if (k->digit[i] != (R-1))
+//            return 0;
+//    }
+//    return 1;
+//}
 
 uchar_t* value_create(const uchar_t* key, const int size) {
     uchar_t* p = malloc(sizeof(uchar_t) * size);
@@ -56,6 +57,10 @@ int main(int argc, char* argv[]) {
 
         Key one = {{0}};
         one.digit[lstc] = 1;
+
+
+      //esse seria o novo loop, mas ia ter que transformar o part pra key pra fazer o perDigitTable_sum???
+      //for (Digit parti[lstc-p_st+1] = {{0}}; ;KeyPart_inc(lstc-p_st+1,parti)) {
         for (Key key = {{0}}; ; Key_add(&key, &key, &one)) {
             // print_key(key);
 
@@ -69,8 +74,10 @@ int main(int argc, char* argv[]) {
                 sobreescritas++;
             }
 
-            if (Key_isMaxFrom(&key, p_st, lstc))
-                break;
+            //if (Key_isMaxFrom(&key, p_st, lstc)) break;
+	    Digit* part = KeyPart_from(lstc+1,p_st,&key);
+	    if (KeyPart_isMax(lstc-p_st+1,part)) { free(part); break; }
+	    free(part);
         }
     }
 
@@ -98,8 +105,10 @@ int main(int argc, char* argv[]) {
                 print_key_char(k);
             }
 
-            if (Key_isMaxFrom(&key, p_br, lstc))
-                break;
+            //if (Key_isMaxFrom(&key, p_br, lstc)) break;
+	    Digit* part = KeyPart_from(lstc+1,p_br,&key);
+	    if (KeyPart_isMax(lstc-p_br+1,part)) { free(part); break; }
+	    free(part);
         }
     }
 
