@@ -31,8 +31,16 @@ int main(int argc, char* argv[]) {
     perDigitTable_build(perDigitTable, table);
 
     SumStack stack = SumStack_create(C, (Key*)perDigitTable);
+	Key *key = SumStack_getKey(&stack);
+	Key *sum = SumStack_getSum(&stack);
 
-    while (SumStack_next(&stack, verify)) { }
+    do {
+		SumStack_calc(&stack);
+
+		if (Key_isEqual(sum, &target))
+        	print_key_char(*key);
+
+	} while (SumStack_next(&stack));
 
 	return 0;
 }

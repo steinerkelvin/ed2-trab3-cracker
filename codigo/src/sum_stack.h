@@ -5,8 +5,6 @@
 #include "util.h"
 #include "key.h"
 
-typedef void (*cb_sum_t)(int c, const Key* key, const Key* sum);
-
 typedef struct sum_stack {
     // perDigitTable a partir do vetor para o primeiro caractere delegado
     Key *perDigitTable;
@@ -19,8 +17,16 @@ typedef struct sum_stack {
 
 } SumStack;
 
-static inline bool SumStack_running(const SumStack *stack) {
+static inline bool SumStack_running(SumStack *stack) {
     return stack->dp;
+}
+
+static inline Key* SumStack_getKey(SumStack *stack) {
+    return &(stack->pos);
+}
+
+static inline Key* SumStack_getSum(SumStack *stack) {
+    return &(stack->sums[stack->c]);
 }
 
 SumStack SumStack_create(int c, Key *perDigitTable) {
@@ -36,8 +42,7 @@ SumStack SumStack_create(int c, Key *perDigitTable) {
     return stack;
 }
 
-bool SumStack_next(SumStack *st, cb_sum_t cb) {
-    assert(st->dp);
+void SumStack_calc(SumStack *st) {
     // garante o preenchimento da pilha
     while (st->dp <= st->c) {
         int prt = st->dp - 1;
@@ -51,11 +56,10 @@ bool SumStack_next(SumStack *st, cb_sum_t cb) {
         st->dp++;
     }
     st->dp--;
+    assert(st->dp == st->c);
+}
 
-    // assert(st->dp == st->c+1);
-    // retorna o valor recem calculado
-    cb(st->c, &st->pos, &st->sums[st->c]);
-
+bool SumStack_next(SumStack *st) {
     // incrementa a chave e desempilha de acordo com o carries
     while ( st->dp && (++st->pos.digit[st->dp-1]) == R ) {
         st->pos.digit[st->dp-1] = 0;
