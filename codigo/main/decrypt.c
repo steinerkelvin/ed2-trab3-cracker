@@ -2,17 +2,19 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <assert.h>
-#include "util.h"
 
-#define VALUE_PTR_TYPE uchar_t
+#include "util.h"
+#include "key.h"
+
+#define VALUE_PTR_TYPE Digit
 #define VALUE_NULL NULL
 #define C_TABLE 4       // 5
 #define HT_SIZE 2097143 // 33554393
 
 #include "table.h"
-#include "key.h"
 #include "key_part.h"
 #include "per_digit.h"
+#include "sum_stack.h"
 #include "hash_table.h"
 
 Key perDigitTable[C][R];
@@ -45,71 +47,64 @@ int main(int argc, char* argv[]) {
     Key target = init_key((uchar_t*) argv[1]);
     perDigitTable_build(perDigitTable, table);
 
-    int pc = 0;
-    int p_st = pc;
-    int c_st = C_TABLE; // MIN(MAXC_TABLE, (C-pc)-1);
+    int pos = 0;
+
+    int p_st = pos;
+    int c_st = C_TABLE;
+    pos += c_st;
 
     int sobreescritas = 0;
+
     HashTable* map = HT_create();
+
+    // Preenche 
     {
-        pc += c_st;
-        const int lstc = p_st + c_st - 1; // 3
+        SumStack stack = SumStack_create(c_st, (Key*)perDigitTable[p_st]);
+        Key *pkey = SumStack_getKey(&stack);
+        Key *psum = SumStack_getSum(&stack);
 
-        Key one = {{0}};
-        one.digit[lstc] = 1;
-
-
-      //esse seria o novo loop, mas ia ter que transformar o part pra key pra fazer o perDigitTable_sum???
-      //for (Digit parti[lstc-p_st+1] = {{0}}; ;KeyPart_inc(lstc-p_st+1,parti)) {
-        for (Key key = {{0}}; ; Key_add(&key, &key, &one)) {
-            // print_key(key);
-
-            Key sum = perDigitTable_sum(perDigitTable, &key);
+        do {
+            SumStack_calc(&stack);
 
             Value *pvalue;
-            bool ins = HT_getOrAdd(map, &sum, &pvalue);
+            bool ins = HT_getOrAdd(map, psum, &pvalue);
             if (ins) {
-                *pvalue = value_create(&key.digit[p_st], c_st);
+                *pvalue = KeyPart_from(c_st, p_st, pkey);
             } else {
+                // TODO utilizar lista de partes-de-chave para armazenar
+                // múltiplas em vez de descartar
                 sobreescritas++;
             }
 
-            //if (Key_isMaxFrom(&key, p_st, lstc)) break;
-	    Digit* part = KeyPart_from(lstc+1,p_st,&key);
-	    if (KeyPart_isMax(lstc-p_st+1,part)) { free(part); break; }
-	    free(part);
-        }
+        } while (SumStack_next(&stack));
+
     }
 
     fprintf(stderr, "hashmap size: %d\n", map->numItems);
     fprintf(stderr, "chaves sobreescritas: %d\n", sobreescritas);
 
+    // Brute force
     {
-        int p_br = pc;
-        int c_br = (C-pc);
-        pc += c_br;
-        const int lstc = p_br + c_br - 1;
+        int p_br = pos;
+        int c_br = (C-pos);
 
-        Key one = {{0}};
-        one.digit[lstc] = 1;
-        for (Key key = {{0}}; ; Key_add(&key, &key, &one)) {
-            Key partial = perDigitTable_sum(perDigitTable, &key);
-            Key needed; Key_sub(&needed, &target, &partial);
+        SumStack stack = SumStack_create(c_br, (Key*)perDigitTable[p_br]);
+        Key *pkey = SumStack_getKey(&stack);
+        Key *psum = SumStack_getSum(&stack);
 
-            Value rest;
-            bool has = HT_search(map, &needed, &rest);
+        do {
+            SumStack_calc(&stack);
+
+            Key needed; Key_sub(&needed, &target, psum);
+            Value rest; bool has = HT_search(map, &needed, &rest);
             if (has) {
-                Key k = key;
-                for (int i = 0; i < c_st; i++)
-                    k.digit[p_st+i] = rest[i];
-                print_key_char(k);
+                Key result;
+                KeyPart_copyTo(c_st, p_st, rest, &result);
+                KeyPart_copyTo(c_br, p_br, pkey->digit, &result);
+                print_key_char(result);
             }
 
-            //if (Key_isMaxFrom(&key, p_br, lstc)) break;
-	    Digit* part = KeyPart_from(lstc+1,p_br,&key);
-	    if (KeyPart_isMax(lstc-p_br+1,part)) { free(part); break; }
-	    free(part);
-        }
+        } while (SumStack_next(&stack));
     }
 
     HT_destroy(map, (cb_value_t)free);

@@ -29,7 +29,11 @@ static inline Key* SumStack_getSum(SumStack *stack) {
     return &(stack->sums[stack->c]);
 }
 
+// TODO passar função para o .c
+
 SumStack SumStack_create(int c, Key *perDigitTable) {
+    assert(c >= 0);
+
     SumStack stack;
     stack.pos = (Key){{0}};
     stack.sums[0] = (Key){{0}};
@@ -37,7 +41,6 @@ SumStack SumStack_create(int c, Key *perDigitTable) {
     stack.perDigitTable = perDigitTable;    
     stack.c = c;
     stack.dp = 1;
-    // stack.finish = 0;
 
     return stack;
 }
@@ -45,18 +48,17 @@ SumStack SumStack_create(int c, Key *perDigitTable) {
 void SumStack_calc(SumStack *st) {
     // garante o preenchimento da pilha
     while (st->dp <= st->c) {
-        int prt = st->dp - 1;
-        const uchar_t digit = st->pos.digit[prt];
-        const Key *digitSum = (st->perDigitTable + R*prt + digit);
+        int pos = st->dp - 1;
+        const uchar_t digit = st->pos.digit[pos];
+        const Key *digitSum = (st->perDigitTable + R*pos + digit);
         Key_add(
             &st->sums[st->dp],
-            &st->sums[prt],
+            &st->sums[pos],
             digitSum
         );
         st->dp++;
     }
     st->dp--;
-    assert(st->dp == st->c);
 }
 
 bool SumStack_next(SumStack *st) {
