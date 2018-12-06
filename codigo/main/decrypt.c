@@ -35,6 +35,14 @@ uchar_t* value_create(const uchar_t* key, const int size) {
     return p;
 }
 
+Key* mat_get_pos(Key *ptr, int c_mat, Digit *digits) {
+    int range = (1 << (B*c_mat));
+    for (int i = 0; i < c_mat; i++) {
+        ptr += (range >>= B) * digits[i];
+    }
+    return ptr;
+}
+
 int main(int argc, char* argv[]) {
     check_decrypt_params(argc, argv);
 
@@ -49,15 +57,16 @@ int main(int argc, char* argv[]) {
 
     int pos = 0;
 
-    int p_st = pos;
-    int c_st = C_TABLE;
+
+    // TABELA DE SÍMBOLOS //
+
+    int p_st = pos;     // primeira posição
+    int c_st = C_TABLE; // número de caracteres delegados
     pos += c_st;
 
+    HashTable* map = HT_create();
     int sobreescritas = 0;
 
-    HashTable* map = HT_create();
-
-    // Preenche 
     {
         SumStack stack = SumStack_create(c_st, (Key*)perDigitTable[p_st]);
         Key *pkey = SumStack_getKey(&stack);
@@ -83,7 +92,29 @@ int main(int argc, char* argv[]) {
     fprintf(stderr, "hashmap size: %d\n", map->numItems);
     fprintf(stderr, "chaves sobreescritas: %d\n", sobreescritas);
 
-    // Brute force
+
+
+    // MATRIZ DE SOMAS PRECOMPUTADAS //
+    // TODO pensar uma maneira decente de iterar nessa matriz
+
+    // int p_mat = pos;
+    // int c_mat = 4;
+    // pos += c_mat;
+    // // Preenche matriz de somas precomputadas
+    // Key *sumMat = malloc( (1<<(B*c_mat)) * sizeof(Key) );
+    // {
+    //     SumStack stack = SumStack_create(c_mat, (Key*)perDigitTable[p_mat]);
+    //     Key *pkey = SumStack_getKey(&stack);
+    //     Key *psum = SumStack_getSum(&stack);
+
+    //     Key *pos = mat_get_pos(sumMat, c_mat, pkey->digit);
+    //     *pos = *psum;
+    // }
+
+
+
+    // BRUTE FORCE //
+
     {
         int p_br = pos;
         int c_br = (C-pos);
@@ -106,6 +137,7 @@ int main(int argc, char* argv[]) {
 
         } while (SumStack_next(&stack));
     }
+
 
     HT_destroy(map, (cb_value_t)free);
 
