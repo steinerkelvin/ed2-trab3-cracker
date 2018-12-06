@@ -8,8 +8,6 @@
 #define R (1 << B)   // Tamanho do alfabeto (sempre = 32).
 #define N (B * C)    // Número de bits por senha.
 
-#define C_TABLE 4
-
 #define ALPHABET "abcdefghijklmnopqrstuvwxyz012345"
 
 typedef unsigned char Digit;
