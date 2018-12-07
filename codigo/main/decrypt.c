@@ -16,9 +16,8 @@
 
 Key perDigitTable[C][R];
 
-// typedef struct mat_ptr {
-//     Digit 
-// } MatPtr;
+void Value_nope(Value* val) { }
+
 
 static inline Key* mat_get_pos(Key *mat, int c_mat, Digit *digits) {
     size_t range = (1 << (B*c_mat));
@@ -81,6 +80,8 @@ int main(int argc, char* argv[]) {
     pos += c_st;
     fprintf(stderr, "c_st: %d\n", c_st);
 
+    avl_reserve_space((1<<(B*c_st)) );
+    KeyPart_reserveSpace(c_st, (1<<(B*c_st)) );
     HashTable* map = buildSymbolTable(p_st, c_st, perDigitTable);
 
 
@@ -169,7 +170,9 @@ int main(int argc, char* argv[]) {
 
     fprintf(stderr, "LIBERANDO\n");
 
-    HT_destroy(map, (cb_value_t)free);
+    KeyPart_freeSpace();
+    avl_free_space();
+    HT_destroy(map, (cb_value_t)Value_nope);
 
     #if MATRIX_ENABLE
     free(sumMat);

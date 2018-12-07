@@ -19,6 +19,10 @@ struct avl {
 
 // TODO comentar
 
+void avl_reserve_space(int n);
+
+void avl_free_space();
+
 void avl_destroy(AVL* a, cb_value_t cb_destroy);
 
 int avl_height(const AVL* tree);

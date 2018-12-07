@@ -12,6 +12,11 @@
 #include "key.h"
 
 
+void KeyPart_reserveSpace(int c, int n);
+
+void KeyPart_freeSpace();
+
+
 void KeyPart_inc(int c, Digit *part);
 
 bool KeyPart_isMax(int c, Digit *part);

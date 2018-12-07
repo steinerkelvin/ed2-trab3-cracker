@@ -18,9 +18,9 @@ HashTable* HT_create() {
 
 void HT_destroy(HashTable* hs, cb_value_t cb_destroy) {
     assert(hs);
-    for (int i = 0; i < HT_SIZE; i++) {
-        avl_destroy(hs->table[i], cb_destroy);
-    }
+    // for (int i = 0; i < HT_SIZE; i++) {
+    //     avl_destroy(hs->table[i], cb_destroy);
+    // }
     free(hs->table);
     free(hs);
 }

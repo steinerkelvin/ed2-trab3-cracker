@@ -1,12 +1,36 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 
 #include "util.h"
 #include "avl.h"
 #include "key.h"
 
 // AVL modificada para ser usada na hashtable para o tipo Key.
+
+static AVL *space = NULL;
+static int next = 0;
+static int avail = 0;
+
+void avl_reserve_space(int n) {
+	assert(space == NULL);
+	avail = n;
+	space = malloc(sizeof(*space) * avail);
+}
+
+void avl_free_space() {
+	free(space);
+}
+
+AVL* avl_create_node() {
+    // AVL* node = malloc(sizeof(AVL));
+    assert(space);
+	AVL* node = space + (next++);
+    avail--;
+    return node;
+}
+
 
 void avl_destroy(AVL* node, cb_value_t cb_destroy){
     if (node == NULL) return;
@@ -79,7 +103,7 @@ static inline int balancing(AVL* tree){
 
 bool avl_get_or_add(AVL** tree, const Key* key, Value** ret){
     if(!(*tree)){
-        AVL* aux = malloc(sizeof(AVL));
+        AVL* aux = avl_create_node();
         aux->k = *key;
         aux->item = VALUE_NULL;
         (*ret) = &(aux->item);
