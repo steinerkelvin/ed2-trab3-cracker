@@ -4,14 +4,10 @@
 #include <stdbool.h>
 #include "table.h"
 #include "key.h"
-#include "avl.h"
 
-typedef struct hash_table {
-    AVL** table;
-    int numItems;
-} HashTable;
+typedef struct hash_table HashTable;
 
-HashTable* HT_create();
+HashTable* HT_create(int num_max);
 
 void HT_destroy(HashTable* hs, cb_value_t cb_destroy);
 

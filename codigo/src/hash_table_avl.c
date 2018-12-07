@@ -3,8 +3,17 @@
 #include <stdlib.h>
 #include <assert.h>
 #include "util.h"
+#include "avl.h"
 
-HashTable* HT_create() {
+typedef struct hash_table {
+    AVL** table;
+    int numItems;
+} HashTable;
+
+HashTable* HT_create(int num_max) {
+    #if FIXED_SPACE
+        avl_reserve_space(num_max);
+    #endif
     HashTable* hs = malloc(sizeof(HashTable));
     assert(hs);
     hs->table = malloc(sizeof(AVL*) * HT_SIZE);
@@ -18,7 +27,9 @@ HashTable* HT_create() {
 
 void HT_destroy(HashTable* hs, cb_value_t cb_destroy) {
     assert(hs);
-    #if !FIXED_SPACE
+    #if FIXED_SPACE
+        avl_free_space();
+    #else
         for (int i = 0; i < HT_SIZE; i++) {
             avl_destroy(hs->table[i], cb_destroy);
         }
