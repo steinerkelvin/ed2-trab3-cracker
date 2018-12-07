@@ -48,8 +48,8 @@ HashTable* buildSymbolTable(
         if (ins) {
             *pvalue = KeyPart_create(c_st, p_st, stKey);
         } else {
-            // TODO utilizar lista de partes-de-chave para armazenar
-            // múltiplas em vez de descartar
+            //! TODO: TRATAR COLISÕES
+            // utilizar lista de partes-de-chave para armazenar múltiplas chaves
             sobreescritas++;
         }
 
@@ -66,6 +66,7 @@ int main(int argc, char* argv[]) {
     check_decrypt_params(argc, argv);
 
     Key table[N];
+    // TODO separar em função e tratar entrada
     for (int i = 0; i < N; i++) {
         uchar_t aux[C];
         scanf("%s",aux);
@@ -74,19 +75,19 @@ int main(int argc, char* argv[]) {
     Key target = init_key((uchar_t*) argv[1]);
     perDigitTable_build(perDigitTable, table);
 
-    int pos = 0;
-
 
     // TABELA DE SÍMBOLOS //
 
-    int p_st = pos;                 // primeira posição
-    int c_st = MIN(C-pos, C_TABLE); // número de caracteres delegados
-    pos += c_st;
+    int p_st = 0;                   // primeira posição
+    int c_st = MIN(C/2, C_TABLE);   // número de caracteres delegados
+    int pos = c_st;
+
     fprintf(stderr, "c_st: %d\n", c_st);
 
     #if FIXED_SPACE
-        avl_reserve_space((1<<(B*c_st)) );
-        KeyPart_reserveSpace(c_st, (1<<(B*c_st)) );
+        const int n_st = (1<<(B*c_st));
+        avl_reserve_space(n_st);
+        KeyPart_reserveSpace(c_st, n_st);
     #endif
 
     HashTable* map = buildSymbolTable(p_st, c_st, perDigitTable);
@@ -139,7 +140,6 @@ int main(int argc, char* argv[]) {
         Key *stSum = SumStack_getSum(&stack);
 
         do {
-            // fprintf(stderr, "BRUTE\n"); //* DEBUG
             SumStack_calc(&stack);
 
             #if MATRIX_ENABLE
@@ -192,11 +192,3 @@ int main(int argc, char* argv[]) {
     return 0;
 }
 
-
-
-// if (Key_isEqual(&partial, &target)) {
-//     Key result;
-//     KeyPart_copyTo(c_mat, p_mat, index, &result);
-//     KeyPart_copyTo(c_br,  p_br, stKey->digit, &result);
-//     print_key_char(result);
-// }
