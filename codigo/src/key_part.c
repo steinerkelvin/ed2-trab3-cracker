@@ -1,20 +1,16 @@
 #include "key_part.h"
 #include <assert.h>
 
-static Digit *space = NULL;
-static int next = 0;
-static int avail = 0;
-
+Space keypart_space;
 
 void KeyPart_reserveSpace(int c, int n) {
-	assert(space == NULL);
-	avail = c * n;
-	space = malloc(sizeof(Digit) * avail);
+	keypart_space = space_alloc(n, sizeof(Digit) * c);
 }
 
 void KeyPart_freeSpace() {
-	free(space);
+	space_free(&keypart_space);
 }
+
 
 void KeyPart_inc(int c, Digit *part) {
     for (int i = c-1; i >= 0; i--) {
@@ -33,11 +29,12 @@ bool KeyPart_isMax(int c, Digit *part) {
 	return 1;
 }
 
-Digit* KeyPart_from(int c, int pos, Key *key) {
-	// Digit* part = malloc(c * sizeof(Digit));
-	assert(space);
-	Digit* part = space + (c*(next++));
-	avail--;
+Digit* KeyPart_create(int c, int pos, Key *key) {
+	#if FIXED_SPACE
+		Digit* part = space_getNext(&keypart_space);
+	#else
+		Digit* part = malloc(c * sizeof(Digit));
+	#endif
 
 	int k = pos;
 	for (int i = 0; i < c; i++) {

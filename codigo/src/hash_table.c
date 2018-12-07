@@ -18,9 +18,11 @@ HashTable* HT_create() {
 
 void HT_destroy(HashTable* hs, cb_value_t cb_destroy) {
     assert(hs);
-    // for (int i = 0; i < HT_SIZE; i++) {
-    //     avl_destroy(hs->table[i], cb_destroy);
-    // }
+    #if !FIXED_SPACE
+        for (int i = 0; i < HT_SIZE; i++) {
+            avl_destroy(hs->table[i], cb_destroy);
+        }
+    #endif
     free(hs->table);
     free(hs);
 }

@@ -1,36 +1,35 @@
+#include "avl.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
 
 #include "util.h"
-#include "avl.h"
 #include "key.h"
 
-// AVL modificada para ser usada na hashtable para o tipo Key.
+// AVL para ser usada na hashtable para o tipo Key.
 
-static AVL *space = NULL;
-static int next = 0;
-static int avail = 0;
+
+Space avl_space;
 
 void avl_reserve_space(int n) {
-	assert(space == NULL);
-	avail = n;
-	space = malloc(sizeof(*space) * avail);
+    avl_space = space_alloc(n, sizeof(AVL));
 }
 
 void avl_free_space() {
-	free(space);
+    space_free(&avl_space);
 }
+
 
 AVL* avl_create_node() {
-    // AVL* node = malloc(sizeof(AVL));
-    assert(space);
-	AVL* node = space + (next++);
-    avail--;
+    #if FIXED_SPACE
+        AVL* node = space_getNext(&avl_space);
+    #else
+        AVL* node = malloc(sizeof(AVL));
+    #endif
+    
     return node;
 }
-
 
 void avl_destroy(AVL* node, cb_value_t cb_destroy){
     if (node == NULL) return;

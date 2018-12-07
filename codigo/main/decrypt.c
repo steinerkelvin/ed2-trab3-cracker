@@ -28,9 +28,13 @@ static inline Key* mat_get_pos(Key *mat, int c_mat, Digit *digits) {
     return mat;
 }
 
-HashTable* buildSymbolTable(int p_st, int c_st, Key perDigitTable[C][R]) {
-    HashTable* map = HT_create();
+HashTable* buildSymbolTable(
+    int p_st,
+    int c_st,
+    Key perDigitTable[C][R]
+) {
     int sobreescritas = 0;
+    HashTable* table = HT_create();
 
     SumStack stack = SumStack_create(c_st, (Key*)perDigitTable[p_st]);
     Key *stKey = SumStack_getKey(&stack);
@@ -40,9 +44,9 @@ HashTable* buildSymbolTable(int p_st, int c_st, Key perDigitTable[C][R]) {
         SumStack_calc(&stack);
 
         Value *pvalue;
-        bool ins = HT_getOrAdd(map, stSum, &pvalue);
+        bool ins = HT_getOrAdd(table, stSum, &pvalue);
         if (ins) {
-            *pvalue = KeyPart_from(c_st, p_st, stKey);
+            *pvalue = KeyPart_create(c_st, p_st, stKey);
         } else {
             // TODO utilizar lista de partes-de-chave para armazenar
             // múltiplas em vez de descartar
@@ -52,10 +56,10 @@ HashTable* buildSymbolTable(int p_st, int c_st, Key perDigitTable[C][R]) {
     } while (SumStack_next(&stack));
 
 
-    fprintf(stderr, "hashmap size: %d\n", map->numItems);
+    fprintf(stderr, "hashmap size: %d\n", table->numItems);
     fprintf(stderr, "chaves sobreescritas: %d\n", sobreescritas);
 
-    return map;
+    return table;
 }
 
 int main(int argc, char* argv[]) {
@@ -80,8 +84,11 @@ int main(int argc, char* argv[]) {
     pos += c_st;
     fprintf(stderr, "c_st: %d\n", c_st);
 
-    avl_reserve_space((1<<(B*c_st)) );
-    KeyPart_reserveSpace(c_st, (1<<(B*c_st)) );
+    #if FIXED_SPACE
+        avl_reserve_space((1<<(B*c_st)) );
+        KeyPart_reserveSpace(c_st, (1<<(B*c_st)) );
+    #endif
+
     HashTable* map = buildSymbolTable(p_st, c_st, perDigitTable);
 
 
@@ -170,9 +177,13 @@ int main(int argc, char* argv[]) {
 
     fprintf(stderr, "LIBERANDO\n");
 
-    KeyPart_freeSpace();
-    avl_free_space();
-    HT_destroy(map, (cb_value_t)Value_nope);
+    #if FIXED_SPACE
+        KeyPart_freeSpace();
+        avl_free_space();
+        HT_destroy(map, (cb_value_t)Value_nope);
+    #else
+        HT_destroy(map, (cb_value_t)free);
+    #endif
 
     #if MATRIX_ENABLE
     free(sumMat);

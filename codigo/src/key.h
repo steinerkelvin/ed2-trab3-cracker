@@ -3,7 +3,7 @@
 
 #include <stdbool.h>
 
-#define C 10          // Número de caracteres na senha.
+#define C 8          // Número de caracteres na senha.
 #define B 5          // Número de bits por caractere.
 #define R (1 << B)   // Tamanho do alfabeto (sempre = 32).
 #define N (B * C)    // Número de bits por senha.
@@ -13,7 +13,9 @@
 #define HT_SIZE 33554393 // 67108859// 2097143 // 33554393
 #define C_TABLE 4 // 4       // 5
 #define C_MATRIX 3
+
 #define MATRIX_ENABLE 0
+#define FIXED_SPACE 1
 
 // ======== //
 

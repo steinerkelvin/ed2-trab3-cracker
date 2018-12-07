@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include "table.h"
 #include "key.h"
+#include "space.h"
 
 // AVL associando valores do tipo Key a "Value"
 
@@ -18,10 +19,6 @@ struct avl {
 };
 
 // TODO comentar
-
-void avl_reserve_space(int n);
-
-void avl_free_space();
 
 void avl_destroy(AVL* a, cb_value_t cb_destroy);
 
@@ -38,5 +35,10 @@ AVL* avl_search(AVL* tree, const Key* k);
  * retorna: se houve inserção
  */
 bool avl_get_or_add(AVL** tree, const Key* key, Value** ret);
+
+
+void avl_reserve_space(int n);
+void avl_free_space();
+
 
 #endif
