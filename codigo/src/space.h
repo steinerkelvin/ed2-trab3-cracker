@@ -1,6 +1,12 @@
 #if !defined(SPACE_H)
 #define SPACE_H
 
+/**
+ * Gerencia espaço alocado para um número pré-determinado de elementos  
+ * O espaço necessário é alocado todo de uma vez e os slots devem ser usados
+ * sequencialmente
+ */
+
 #include <stdlib.h>
 #include <assert.h>
 
@@ -11,28 +17,22 @@ typedef struct space {
     char *ptr;
 } Space;
 
-static inline Space space_alloc(size_t num, size_t size) {
-    char *ptr = (char*) calloc(num, size);
-    Space space = {
-        .item_size = size,
-        .max_num = num,
-        .num = 0,
-        .ptr = ptr,
-    };
-    return space;
-}
+/**
+ * Aloca um espaço para `num` elementos de tamanho `size`
+ */
+Space space_alloc(size_t num, size_t size);
 
-static inline void * space_getNext(Space *space) {
-    assert(space->num < space->max_num);
-    char *ret =
-        space->ptr + (space->item_size * space->num);
-    space->num++;
-    return ret;
-}
+/**
+ * Retorna ponteiro para o próximo slot disponível
+ * pre: ainda há slots disponíveis
+ * pos: há menos um slot disponível
+ */
+void * space_getNext(Space *space);
 
-static inline void space_free(Space *space) {
-    free(space->ptr);
-}
+/**
+ * Libera todo o espaço
+ */
+void space_free(Space *space);
 
 
 #endif // SPACE_H
