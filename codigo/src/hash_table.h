@@ -6,10 +6,6 @@
 #include "key.h"
 #include "avl.h"
 
-#if !defined HT_SIZE
-    #define HT_SIZE 65521
-#endif
-
 typedef struct hash_table {
     AVL** table;
     int numItems;

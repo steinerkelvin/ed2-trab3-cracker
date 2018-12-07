@@ -1,0 +1,245 @@
+Flat profile:
+
+Each sample counts as 0.01 seconds.
+  %   cumulative   self              self     total           
+ time   seconds   seconds    calls  ms/call  ms/call  name    
+ 69.74     73.38    73.38 568939316     0.00     0.00  Key_compare
+ 16.20     90.43    17.04 33554432     0.00     0.00  avl_get_or_add
+  5.12     95.82     5.39    65521     0.08     0.08  avl_destroy
+  3.90     99.93     4.11                             HT_search
+  1.19    101.17     1.25 33554432     0.00     0.00  avl_search
+  1.16    102.40     1.22 33554432     0.00     0.00  HT_getOrAdd
+  1.08    103.53     1.13 69273664     0.00     0.00  Key_add
+  0.45    104.00     0.47                             Key_sub
+  0.40    104.43     0.43 33554432     0.00     0.00  SumStack_calc
+  0.30    104.74     0.31      320     0.97     0.97  subset_sum
+  0.24    104.99     0.25 33554432     0.00     0.00  KeyPart_from
+  0.16    105.16     0.17                             buildSymbolTable
+  0.10    105.26     0.11 11605651     0.00     0.00  rotateLeft
+  0.08    105.34     0.08 11569396     0.00     0.00  rotateRight
+  0.04    105.38     0.04                             HT_destroy
+  0.02    105.41     0.03        1    25.06    25.06  SumStack_create
+  0.02    105.43     0.03                             KeyPart_copyTo
+  0.01    105.44     0.01                             KeyPart_isMax
+  0.01    105.45     0.01                             Key_isMax
+  0.00    105.45     0.00        1     0.00     0.00  HT_create
+
+ %         the percentage of the total running time of the
+time       program used by this function.
+
+cumulative a running sum of the number of seconds accounted
+ seconds   for by this function and those listed above it.
+
+ self      the number of seconds accounted for by this
+seconds    function alone.  This is the major sort for this
+           listing.
+
+calls      the number of times this function was invoked, if
+           this function is profiled, else blank.
+
+ self      the average number of milliseconds spent in this
+ms/call    function per call, if this function is profiled,
+	   else blank.
+
+ total     the average number of milliseconds spent in this
+ms/call    function and its descendents per call, if this
+	   function is profiled, else blank.
+
+name       the name of the function.  This is the minor sort
+           for this listing. The index shows the location of
+	   the function in the gprof listing. If the index is
+	   in parenthesis it shows where it would appear in
+	   the gprof listing if it were to be printed.
+
+Copyright (C) 2012-2018 Free Software Foundation, Inc.
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.
+
+		     Call graph (explanation follows)
+
+
+granularity: each sample hit covers 2 byte(s) for 0.01% of 105.45 seconds
+
+index % time    self  children    called     name
+               33.54    0.00 260001558/568939316     avl_get_or_add [4]
+               39.85    0.00 308937758/568939316     avl_search [6]
+[1]     69.6   73.38    0.00 568939316         Key_compare [1]
+-----------------------------------------------
+                                                 <spontaneous>
+[2]     51.2    0.17   53.82                 buildSymbolTable [2]
+                1.22   50.76 33554432/33554432     HT_getOrAdd [3]
+                0.43    1.13 33554432/33554432     SumStack_calc [9]
+                0.25    0.00 33554432/33554432     KeyPart_from [14]
+                0.03    0.00       1/1           SumStack_create [17]
+                0.00    0.00       1/1           HT_create [21]
+-----------------------------------------------
+                1.22   50.76 33554432/33554432     buildSymbolTable [2]
+[3]     49.3    1.22   50.76 33554432         HT_getOrAdd [3]
+               17.04   33.72 33554432/33554432     avl_get_or_add [4]
+-----------------------------------------------
+                             260001558             avl_get_or_add [4]
+               17.04   33.72 33554432/33554432     HT_getOrAdd [3]
+[4]     48.1   17.04   33.72 33554432+260001558 avl_get_or_add [4]
+               33.54    0.00 260001558/568939316     Key_compare [1]
+                0.11    0.00 11605651/11605651     rotateLeft [15]
+                0.08    0.00 11569396/11569396     rotateRight [16]
+                             260001558             avl_get_or_add [4]
+-----------------------------------------------
+                                                 <spontaneous>
+[5]     42.9    4.11   41.09                 HT_search [5]
+                1.25   39.85 33554432/33554432     avl_search [6]
+-----------------------------------------------
+                1.25   39.85 33554432/33554432     HT_search [5]
+[6]     39.0    1.25   39.85 33554432         avl_search [6]
+               39.85    0.00 308937758/568939316     Key_compare [1]
+-----------------------------------------------
+                                                 <spontaneous>
+[7]      5.2    0.04    5.39                 HT_destroy [7]
+                5.39    0.00   65521/65521       avl_destroy [8]
+-----------------------------------------------
+                             67108864             avl_destroy [8]
+                5.39    0.00   65521/65521       HT_destroy [7]
+[8]      5.1    5.39    0.00   65521+67108864 avl_destroy [8]
+                             67108864             avl_destroy [8]
+-----------------------------------------------
+                0.43    1.13 33554432/33554432     buildSymbolTable [2]
+[9]      1.5    0.43    1.13 33554432         SumStack_calc [9]
+                1.13    0.00 69273664/69273664     Key_add [10]
+-----------------------------------------------
+                1.13    0.00 69273664/69273664     SumStack_calc [9]
+[10]     1.1    1.13    0.00 69273664         Key_add [10]
+-----------------------------------------------
+                                                 <spontaneous>
+[11]     0.4    0.47    0.00                 Key_sub [11]
+-----------------------------------------------
+                0.31    0.00     320/320         perDigitTable_build [13]
+[12]     0.3    0.31    0.00     320         subset_sum [12]
+-----------------------------------------------
+                                                 <spontaneous>
+[13]     0.3    0.00    0.31                 perDigitTable_build [13]
+                0.31    0.00     320/320         subset_sum [12]
+-----------------------------------------------
+                0.25    0.00 33554432/33554432     buildSymbolTable [2]
+[14]     0.2    0.25    0.00 33554432         KeyPart_from [14]
+-----------------------------------------------
+                0.11    0.00 11605651/11605651     avl_get_or_add [4]
+[15]     0.1    0.11    0.00 11605651         rotateLeft [15]
+-----------------------------------------------
+                0.08    0.00 11569396/11569396     avl_get_or_add [4]
+[16]     0.1    0.08    0.00 11569396         rotateRight [16]
+-----------------------------------------------
+                0.03    0.00       1/1           buildSymbolTable [2]
+[17]     0.0    0.03    0.00       1         SumStack_create [17]
+-----------------------------------------------
+                                                 <spontaneous>
+[18]     0.0    0.03    0.00                 KeyPart_copyTo [18]
+-----------------------------------------------
+                                                 <spontaneous>
+[19]     0.0    0.01    0.00                 KeyPart_isMax [19]
+-----------------------------------------------
+                                                 <spontaneous>
+[20]     0.0    0.01    0.00                 Key_isMax [20]
+-----------------------------------------------
+                0.00    0.00       1/1           buildSymbolTable [2]
+[21]     0.0    0.00    0.00       1         HT_create [21]
+-----------------------------------------------
+
+ This table describes the call tree of the program, and was sorted by
+ the total amount of time spent in each function and its children.
+
+ Each entry in this table consists of several lines.  The line with the
+ index number at the left hand margin lists the current function.
+ The lines above it list the functions that called this function,
+ and the lines below it list the functions this one called.
+ This line lists:
+     index	A unique number given to each element of the table.
+		Index numbers are sorted numerically.
+		The index number is printed next to every function name so
+		it is easier to look up where the function is in the table.
+
+     % time	This is the percentage of the `total' time that was spent
+		in this function and its children.  Note that due to
+		different viewpoints, functions excluded by options, etc,
+		these numbers will NOT add up to 100%.
+
+     self	This is the total amount of time spent in this function.
+
+     children	This is the total amount of time propagated into this
+		function by its children.
+
+     called	This is the number of times the function was called.
+		If the function called itself recursively, the number
+		only includes non-recursive calls, and is followed by
+		a `+' and the number of recursive calls.
+
+     name	The name of the current function.  The index number is
+		printed after it.  If the function is a member of a
+		cycle, the cycle number is printed between the
+		function's name and the index number.
+
+
+ For the function's parents, the fields have the following meanings:
+
+     self	This is the amount of time that was propagated directly
+		from the function into this parent.
+
+     children	This is the amount of time that was propagated from
+		the function's children into this parent.
+
+     called	This is the number of times this parent called the
+		function `/' the total number of times the function
+		was called.  Recursive calls to the function are not
+		included in the number after the `/'.
+
+     name	This is the name of the parent.  The parent's index
+		number is printed after it.  If the parent is a
+		member of a cycle, the cycle number is printed between
+		the name and the index number.
+
+ If the parents of the function cannot be determined, the word
+ `<spontaneous>' is printed in the `name' field, and all the other
+ fields are blank.
+
+ For the function's children, the fields have the following meanings:
+
+     self	This is the amount of time that was propagated directly
+		from the child into the function.
+
+     children	This is the amount of time that was propagated from the
+		child's children to the function.
+
+     called	This is the number of times the function called
+		this child `/' the total number of times the child
+		was called.  Recursive calls by the child are not
+		listed in the number after the `/'.
+
+     name	This is the name of the child.  The child's index
+		number is printed after it.  If the child is a
+		member of a cycle, the cycle number is printed
+		between the name and the index number.
+
+ If there are any cycles (circles) in the call graph, there is an
+ entry for the cycle-as-a-whole.  This entry shows who called the
+ cycle (as parents) and the members of the cycle (as children.)
+ The `+' recursive calls entry shows the number of function calls that
+ were internal to the cycle, and the calls entry for each member shows,
+ for that member, how many times it was called from other members of
+ the cycle.
+
+Copyright (C) 2012-2018 Free Software Foundation, Inc.
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.
+
+Index by function name
+
+  [21] HT_create              [10] Key_add                 [4] avl_get_or_add
+   [7] HT_destroy              [1] Key_compare             [6] avl_search
+   [3] HT_getOrAdd            [20] Key_isMax               [2] buildSymbolTable
+   [5] HT_search              [11] Key_sub                [15] rotateLeft
+  [18] KeyPart_copyTo          [9] SumStack_calc          [16] rotateRight
+  [14] KeyPart_from           [17] SumStack_create        [12] subset_sum
+  [19] KeyPart_isMax           [8] avl_destroy

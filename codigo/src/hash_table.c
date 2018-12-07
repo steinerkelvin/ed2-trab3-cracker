@@ -25,19 +25,28 @@ void HT_destroy(HashTable* hs, cb_value_t cb_destroy) {
     free(hs);
 }
 
-static uint_t Key_hash_adler(const Key* k) {
-    uint_t s1 = 1;
-    uint_t s2 = 0;
-    for(int i = 0; i < C; i++) {
-        s1 = (s1 + k->digit[i]) % 65521;
-        s2 = (s1 + s2) % 65521;
+// static uint_t Key_hash_adler(const Key* k) {
+//     uint_t s1 = 1;
+//     uint_t s2 = 0;
+//     for(int i = 0; i < C; i++) {
+//         s1 = (s1 + k->digit[i]) % 65521;
+//         s2 = (s1 + s2) % 65521;
+//     }
+//     return ((s2 << 16) | s1) % HT_SIZE;
+// }
+
+static uint_t Key_hash_horner(const Key* k) {
+    uint_t h = 0;
+    for (int i = 0; i < C; i++) {
+        h = (31*h + k->digit[i]) % HT_SIZE;
     }
-    return ((s2 << 16) | s1) % HT_SIZE;
+    return h;
 }
 
 
+
 bool HT_search(const HashTable* hs, const Key* k, Value* ret) {
-    uint_t hash = Key_hash_adler(k);
+    uint_t hash = Key_hash_horner(k);
     AVL* avl = avl_search(hs->table[hash], k);
     if (avl == NULL)
         return false;
@@ -46,7 +55,7 @@ bool HT_search(const HashTable* hs, const Key* k, Value* ret) {
 }
 
 bool HT_getOrAdd(HashTable* hs, const Key* k, Value** ret) {
-	uint_t hash = Key_hash_adler(k);
+	uint_t hash = Key_hash_horner(k);
     const bool ins = avl_get_or_add(&(hs->table[hash]), k, ret);
 	if (ins)
         hs->numItems++;

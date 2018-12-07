@@ -3,17 +3,11 @@
 #include <stdbool.h>
 #include <assert.h>
 
-#include "util.h"
-#include "key.h"
-
 #define VALUE_PTR_TYPE Digit
 #define VALUE_NULL NULL
-#define HT_SIZE 2097143 // 33554393
-#define C_TABLE 4       // 5
-#define C_MATRIX 3
 
-#define MATRIX_ENABLE 0
-
+#include "util.h"
+#include "key.h"
 #include "table.h"
 #include "key_part.h"
 #include "per_digit.h"
@@ -33,6 +27,36 @@ static inline Key* mat_get_pos(Key *mat, int c_mat, Digit *digits) {
         mat += (range) * digits[i];
     }
     return mat;
+}
+
+HashTable* buildSymbolTable(int p_st, int c_st, Key perDigitTable[C][R]) {
+    HashTable* map = HT_create();
+    int sobreescritas = 0;
+
+    SumStack stack = SumStack_create(c_st, (Key*)perDigitTable[p_st]);
+    Key *stKey = SumStack_getKey(&stack);
+    Key *stSum = SumStack_getSum(&stack);
+
+    do {
+        SumStack_calc(&stack);
+
+        Value *pvalue;
+        bool ins = HT_getOrAdd(map, stSum, &pvalue);
+        if (ins) {
+            *pvalue = KeyPart_from(c_st, p_st, stKey);
+        } else {
+            // TODO utilizar lista de partes-de-chave para armazenar
+            // múltiplas em vez de descartar
+            sobreescritas++;
+        }
+
+    } while (SumStack_next(&stack));
+
+
+    fprintf(stderr, "hashmap size: %d\n", map->numItems);
+    fprintf(stderr, "chaves sobreescritas: %d\n", sobreescritas);
+
+    return map;
 }
 
 int main(int argc, char* argv[]) {
@@ -55,37 +79,9 @@ int main(int argc, char* argv[]) {
     int p_st = pos;                 // primeira posição
     int c_st = MIN(C-pos, C_TABLE); // número de caracteres delegados
     pos += c_st;
-
     fprintf(stderr, "c_st: %d\n", c_st);
 
-    HashTable* map = HT_create();
-    int sobreescritas = 0;
-
-    {
-        SumStack stack = SumStack_create(c_st, (Key*)perDigitTable[p_st]);
-        Key *stKey = SumStack_getKey(&stack);
-        Key *stSum = SumStack_getSum(&stack);
-
-        do {
-            SumStack_calc(&stack);
-
-            Value *pvalue;
-            bool ins = HT_getOrAdd(map, stSum, &pvalue);
-            if (ins) {
-                *pvalue = KeyPart_from(c_st, p_st, stKey);
-            } else {
-                // TODO utilizar lista de partes-de-chave para armazenar
-                // múltiplas em vez de descartar
-                sobreescritas++;
-            }
-
-        } while (SumStack_next(&stack));
-
-    }
-
-    fprintf(stderr, "hashmap size: %d\n", map->numItems);
-    fprintf(stderr, "chaves sobreescritas: %d\n", sobreescritas);
-
+    HashTable* map = buildSymbolTable(p_st, c_st, perDigitTable);
 
 
     // MATRIZ DE SOMAS PRECOMPUTADAS //
@@ -140,12 +136,13 @@ int main(int argc, char* argv[]) {
 
             #if MATRIX_ENABLE
 
+            Key partial;
+            Key *const ppartial = &partial;
             Digit index[c_mat];  for (int i=0; i < c_mat; i++) index[i] = 0;
             for (int i = 0; i < n_mat; i++)
             {
                 Key *matSum = mat_get_pos(sumMat, c_mat, index);
-                Key partial; Key_add(&partial, matSum, stSum);
-                Key *ppartial = &partial;
+                Key_add(&partial, matSum, stSum);
             #else
                 Key *ppartial = stSum;
             #endif
@@ -169,6 +166,8 @@ int main(int argc, char* argv[]) {
 
         } while (SumStack_next(&stack));
     }
+
+    fprintf(stderr, "LIBERANDO\n");
 
     HT_destroy(map, (cb_value_t)free);
 
