@@ -8,7 +8,7 @@ Nome 2: Kelvin Steiner Santos
 SO utilizado: Linux (Ubuntu 16.04 e Manjaro)
 Versão do compilador utilizado:
 Editor(es) de código utilizado(s): vscode, Atom
-Número de horas gastas para fazer o trabalho (aproximado):
+Número de horas gastas para fazer o trabalho (aproximado): 
 
 /******************************************************************************
  *  Se você usou o arquivo key.c, descreva qualquer modificação/otimização que

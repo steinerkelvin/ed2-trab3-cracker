@@ -6,6 +6,7 @@
 
 #include "util.h"
 #include "key.h"
+#include "space.h"
 
 // AVL para ser usada na hashtable para o tipo Key.
 

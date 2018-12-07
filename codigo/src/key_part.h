@@ -2,9 +2,9 @@
 #define KEY_PART_H
 
 /**
- * Tipo para armazenar um pedaço de chave de tamanho fixo na tabela
- * Expõe também uma implementação de lista para esse tipo
+ * Tipo para listas de partes de chave de um certo tamanho
  */
+
 #include <stdbool.h>
 #include <stdlib.h>
 
@@ -12,22 +12,30 @@
 #include "space.h"
 
 
-// void KeyPart_inc(int c, Digit *part);
+typedef struct part_list PartList;
 
-// bool KeyPart_isMax(int c, Digit *part);
+typedef struct part_list {
+    PartList* next;
+    Digit part[];
+} PartList;
+
 
 /**
- * pos:
- *  foi alocado um esçaco de `c` dígitos para onde foi copiado o pedaço da chave
- *  `key` começando de `pos` com `c` dígitos de comprimento
+ * Copia de um vetor de dígitos para uma certa posição em uma chave
  */
-Digit* KeyPart_create(int c, int pos, Key *key);
+void copy_digits_to(int c, int pos, Digit *part, Key *key);
 
-void KeyPart_copyTo(int c, int pos, Digit *part, Key *key);
+// Digit* KeyPart_create(int c, int pos, Key *key);
 
 
-void KeyPart_reserveSpace(int c, int n);
-void KeyPart_freeSpace();
+void PartList_free(PartList* node);
+
+void PartList_insert(PartList** list, int c, int pos, Key *key);
+
+
+
+void parts_reserveSpace(int c, int n);
+void parts_freeSpace();
 
 
 #endif // KEY_PART_H

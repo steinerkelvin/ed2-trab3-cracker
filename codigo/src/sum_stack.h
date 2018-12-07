@@ -17,10 +17,6 @@ typedef struct sum_stack {
 
 } SumStack;
 
-static inline bool SumStack_running(SumStack *stack) {
-    return stack->dp;
-}
-
 static inline Key* SumStack_getKey(SumStack *stack) {
     return &(stack->pos);
 }

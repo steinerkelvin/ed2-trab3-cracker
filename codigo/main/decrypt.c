@@ -3,11 +3,12 @@
 #include <stdbool.h>
 #include <assert.h>
 
-#define VALUE_PTR_TYPE Digit
+#define VALUE_PTR_TYPE PartList
 #define VALUE_NULL NULL
 
 #include "util.h"
 #include "key.h"
+#include "key_part.h"
 #include "table.h"
 #include "key_part.h"
 #include "per_digit.h"
@@ -30,7 +31,7 @@ HashTable* buildSymbolTable(
     int c_tbl,
     Key perDigitTable[C][R]
 ) {
-    int sobreescritas = 0;
+    int colisoes = 0;
 
     SumStack stack = SumStack_create(c_tbl, (Key*)perDigitTable[p_tbl]);
     Key *stKey = SumStack_getKey(&stack);
@@ -39,21 +40,18 @@ HashTable* buildSymbolTable(
     do {
         SumStack_calc(&stack);
 
-        Value *pvalue;
-        bool ins = HT_getOrAdd(table, stSum, &pvalue);
-        if (ins) {
-            *pvalue = KeyPart_create(c_tbl, 0, stKey);
-        } else {
-            //! TODO: TRATAR COLISÕES
-            // utilizar lista de partes-de-chave para armazenar múltiplas chaves
-            sobreescritas++;
+        PartList **plist;
+        bool ins = HT_getOrAdd(table, stSum, &plist); // TRIPLE POINTER :D
+        if (!ins) {
+            colisoes++;
         }
+        PartList_insert(plist, c_tbl, p_tbl, stKey);
 
     } while (SumStack_next(&stack));
 
 
     // fprintf(stderr, "hashmap size: %d\n", table->numItems); //* DEBUG
-    // fprintf(stderr, "chaves sobreescritas: %d\n", sobreescritas); //* DEBUG
+    fprintf(stderr, "colisoes: %d\n", colisoes); //* DEBUG
 
     return table;
 }
@@ -70,14 +68,14 @@ int main(int argc, char* argv[]) {
     // ==== Cria tabela de símbolos para combinações de `c_tbl` caracteres ====
 
     int p_tbl = 0;                   // primeira posição
-    int c_tbl = MIN(C/2, C_TABLE);   // número de caracteres delegados
+    int c_tbl = MIN(5, C_TABLE);   // número de caracteres delegados
     int pos = c_tbl;
-    // fprintf(stderr, "c_tbl: %d\n", c_tbl); //* DEBUG
+    fprintf(stderr, "c_tbl: %d\n", c_tbl); //* DEBUG
 
     // Reserva espaço para os valores da tabela
     const int n_tbl = (1<<(B*c_tbl));
     #if FIXED_SPACE
-        KeyPart_reserveSpace(c_tbl, n_tbl);
+        parts_reserveSpace(c_tbl, n_tbl);
     #endif
 
     HashTable* map = HT_create(n_tbl);
@@ -89,7 +87,7 @@ int main(int argc, char* argv[]) {
     int p_stk = pos;     // primeira posição
     int c_br = (C-pos); // número de caracteres delegados
 
-    // fprintf(stderr, "c_br: %d\n", c_br); //* DEBUG
+    fprintf(stderr, "c_br: %d\n", c_br); //* DEBUG
 
     {
         SumStack stack = SumStack_create(c_br, (Key*)perDigitTable[p_stk]);
@@ -100,12 +98,16 @@ int main(int argc, char* argv[]) {
             SumStack_calc(&stack);
 
             Key needed; Key_sub(&needed, &target, stSum);
-            Value rest; bool has = HT_search(map, &needed, &rest);
+            PartList *list; bool has = HT_search(map, &needed, &list);
             if (has) {
                 Key result;
-                KeyPart_copyTo(c_tbl, p_tbl, rest, &result);
-                KeyPart_copyTo(c_br, p_stk, stKey->digit, &result);
-                print_key_char(result);
+                copy_digits_to(c_br, p_stk, stKey->digit, &result);
+
+                // Para todas as chaves associadas à soma encontrada
+                for (; list != NULL; list = list->next) {
+                    copy_digits_to(c_tbl, p_tbl, list->part, &result);
+                    print_key_char(result);
+                }
             }
 
         } while (SumStack_next(&stack));
@@ -114,10 +116,10 @@ int main(int argc, char* argv[]) {
     // fprintf(stderr, "Liberando...\n");  //* DEBUG
 
     #if FIXED_SPACE
-        KeyPart_freeSpace();
+        parts_freeSpace();
         HT_destroy(map, (cb_value_t)Value_nope);
     #else
-        HT_destroy(map, (cb_value_t)free);
+        HT_destroy(map, (cb_value_t)PartList_free);
     #endif
 
     return 0;

@@ -5,7 +5,7 @@
 
 // ==== PARÂMETROS DA CHAVE ==== //
 
-#define C 8          // Número de caracteres na senha.
+#define C 5          // Número de caracteres na senha.
 #define B 5          // Número de bits por caractere.
 #define R (1 << B)   // Tamanho do alfabeto (sempre = 32).
 #define N (B * C)    // Número de bits por senha.
@@ -14,12 +14,12 @@
 
 // ==== PARÂMETROS DE EXECUÇÃO ==== //
 
-#define HT_SIZE 2097143 
-#define C_TABLE 4
+// #define HT_SIZE 2097143 
+// #define C_TABLE 4
 
-// // Valores alternativos (usa ~32 vezes mais memória na tabela)
-// #define HT_SIZE 33554393
-// #define C_TABLE 5
+// Valores alternativos (usa ~32 vezes mais memória na tabela)
+#define HT_SIZE 33554393
+#define C_TABLE 5
 
 // Usa `space.h` para alocar todo espaço para a tabela de uma vez
 #define FIXED_SPACE 1
