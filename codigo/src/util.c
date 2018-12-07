@@ -4,7 +4,7 @@
 #include <string.h>
 #include "key.h"
 
-void check_decrypt_params(int argc, char* argv[]) {
+void check_params(int argc, char* argv[]) {
     // Garante um parâmetro
     if (argc <= 1) {
         fprintf(stderr, "Falta parâmetro. Uso:\n");

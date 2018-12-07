@@ -16,7 +16,7 @@ void verify(int c, const Key *key, const Key *sum) {
 }
 
 int main(int argc, char* argv[]) {
-    check_decrypt_params(argc, argv);
+    check_params(argc, argv);
 
 	Key table[N];
 	for (int i = 0; i < N; i++) {

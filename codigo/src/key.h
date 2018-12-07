@@ -50,6 +50,8 @@ Key subset_sum(Key k, Key T[N]);
 
 // ======== //
 
+void Key_readTable(Key table[N]);
+
 void Key_inc(Key *key);
 
 bool Key_isMax(const Key *k);

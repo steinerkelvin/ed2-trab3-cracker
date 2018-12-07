@@ -6,7 +6,7 @@
 #include "per_digit.h"
 
 int main(int argc, char* argv[]) {
-	check_decrypt_params(argc, argv);
+	check_params(argc, argv);
 
 	Key table[N];
 	Key perDigitTable[C][R];

@@ -5,14 +5,10 @@
 #include "key.h"
 
 int main(int argc, char* argv[]) {
-	check_decrypt_params(argc, argv);
+	check_params(argc, argv);
 
 	Key table[N];
-	for (int i = 0; i < N; i++) {
-		uchar_t aux[C];
-		scanf("%s",aux);
-		table[i] = init_key(aux);
-	}
+	Key_readTable(table);
 
 	Key in = init_key((uchar_t*) argv[1]);
 

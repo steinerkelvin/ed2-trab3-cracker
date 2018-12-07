@@ -19,24 +19,20 @@ Key perDigitTable[C][R];
 void Value_nope(Value* val) { }
 
 
-static inline Key* mat_get_pos(Key *mat, int c_mat, Digit *digits) {
-    size_t range = (1 << (B*c_mat));
-    for (int i = 0; i < c_mat; i++) {
-        range >>= B;
-        mat += (range) * digits[i];
-    }
-    return mat;
-}
 
+/**
+ * Preenche a tabela de símbolos utilizando a pilha de somas para produzir as
+ * somas das combinações de `c_tbl`
+ */
 HashTable* buildSymbolTable(
     HashTable *table,
-    int p_st,
-    int c_st,
+    int p_tbl,
+    int c_tbl,
     Key perDigitTable[C][R]
 ) {
     int sobreescritas = 0;
 
-    SumStack stack = SumStack_create(c_st, (Key*)perDigitTable[p_st]);
+    SumStack stack = SumStack_create(c_tbl, (Key*)perDigitTable[p_tbl]);
     Key *stKey = SumStack_getKey(&stack);
     Key *stSum = SumStack_getSum(&stack);
 
@@ -46,7 +42,7 @@ HashTable* buildSymbolTable(
         Value *pvalue;
         bool ins = HT_getOrAdd(table, stSum, &pvalue);
         if (ins) {
-            *pvalue = KeyPart_create(c_st, p_st, stKey);
+            *pvalue = KeyPart_create(c_tbl, 0, stKey);
         } else {
             //! TODO: TRATAR COLISÕES
             // utilizar lista de partes-de-chave para armazenar múltiplas chaves
@@ -56,53 +52,47 @@ HashTable* buildSymbolTable(
     } while (SumStack_next(&stack));
 
 
-    // fprintf(stderr, "hashmap size: %d\n", table->numItems);
-    fprintf(stderr, "chaves sobreescritas: %d\n", sobreescritas);
+    // fprintf(stderr, "hashmap size: %d\n", table->numItems); //* DEBUG
+    // fprintf(stderr, "chaves sobreescritas: %d\n", sobreescritas); //* DEBUG
 
     return table;
 }
 
 int main(int argc, char* argv[]) {
-    check_decrypt_params(argc, argv);
+    check_params(argc, argv);
+    Key target = init_key((uchar_t*) argv[1]);
 
     Key table[N];
-    // TODO separar em função e tratar entrada
-    for (int i = 0; i < N; i++) {
-        uchar_t aux[C];
-        scanf("%s",aux);
-        table[i] = init_key(aux);
-    }
-    Key target = init_key((uchar_t*) argv[1]);
+    Key_readTable(table);
     perDigitTable_build(perDigitTable, table);
 
 
-    // Tabela de símbolos preenchida para `c_st` caracteres
+    // ==== Cria tabela de símbolos para combinações de `c_tbl` caracteres ====
 
-    int p_st = 0;                   // primeira posição
-    int c_st = MIN(C/2, C_TABLE);   // número de caracteres delegados
-    int pos = c_st;
+    int p_tbl = 0;                   // primeira posição
+    int c_tbl = MIN(C/2, C_TABLE);   // número de caracteres delegados
+    int pos = c_tbl;
+    // fprintf(stderr, "c_tbl: %d\n", c_tbl); //* DEBUG
 
-    fprintf(stderr, "c_st: %d\n", c_st);
-
-    const int n_st = (1<<(B*c_st));
-
+    // Reserva espaço para os valores da tabela
+    const int n_tbl = (1<<(B*c_tbl));
     #if FIXED_SPACE
-        KeyPart_reserveSpace(c_st, n_st);
+        KeyPart_reserveSpace(c_tbl, n_tbl);
     #endif
 
-    HashTable* map = HT_create(n_st);
-    buildSymbolTable(map, p_st, c_st, perDigitTable);
+    HashTable* map = HT_create(n_tbl);
+    buildSymbolTable(map, p_tbl, c_tbl, perDigitTable);
 
 
-    // Cálculo do resto das combinações utilizando a pilha de somas
+    // ==== Faz combinações para o resto da chave utilizando pilha de somas ====
 
-    int p_br = pos;
-    int c_br = (C-pos);
+    int p_stk = pos;     // primeira posição
+    int c_br = (C-pos); // número de caracteres delegados
 
-    fprintf(stderr, "c_br: %d\n", c_br);
+    // fprintf(stderr, "c_br: %d\n", c_br); //* DEBUG
 
     {
-        SumStack stack = SumStack_create(c_br, (Key*)perDigitTable[p_br]);
+        SumStack stack = SumStack_create(c_br, (Key*)perDigitTable[p_stk]);
         Key *stKey = SumStack_getKey(&stack);
         Key *stSum = SumStack_getSum(&stack);
 
@@ -113,15 +103,15 @@ int main(int argc, char* argv[]) {
             Value rest; bool has = HT_search(map, &needed, &rest);
             if (has) {
                 Key result;
-                KeyPart_copyTo(c_st, p_st, rest, &result);
-                KeyPart_copyTo(c_br, p_br, stKey->digit, &result);
+                KeyPart_copyTo(c_tbl, p_tbl, rest, &result);
+                KeyPart_copyTo(c_br, p_stk, stKey->digit, &result);
                 print_key_char(result);
             }
 
         } while (SumStack_next(&stack));
     }
 
-    fprintf(stderr, "LIBERANDO\n");
+    // fprintf(stderr, "Liberando...\n");  //* DEBUG
 
     #if FIXED_SPACE
         KeyPart_freeSpace();

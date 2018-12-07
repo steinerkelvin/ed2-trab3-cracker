@@ -12,9 +12,9 @@
 #include "space.h"
 
 
-void KeyPart_inc(int c, Digit *part);
+// void KeyPart_inc(int c, Digit *part);
 
-bool KeyPart_isMax(int c, Digit *part);
+// bool KeyPart_isMax(int c, Digit *part);
 
 /**
  * pos:

@@ -31,11 +31,7 @@ int main(int argc, char *argv[]) {
     printf("\n");
 
     // Lê a tabela T.
-    unsigned char buffer[C+1];     // Buffer temporário.
-    for (int i = 0; i < N; i++) {
-        scanf("%s", buffer);
-        T[i] = init_key(buffer);
-    }
+    Key_readTable(T);
 
     // Calcula a soma de subconjunto.
     encrypted = subset_sum(password, T);

@@ -12,22 +12,22 @@ void KeyPart_freeSpace() {
 }
 
 
-void KeyPart_inc(int c, Digit *part) {
-    for (int i = c-1; i >= 0; i--) {
-        part[i] += 1;
-        if (part[i] < R)
-            break;
-        part[i] %= R;
-    }
-}
+// void KeyPart_inc(int c, Digit *part) {
+//     for (int i = c-1; i >= 0; i--) {
+//         part[i] += 1;
+//         if (part[i] < R)
+//             break;
+//         part[i] %= R;
+//     }
+// }
 
-bool KeyPart_isMax(int c, Digit *part) {
-	for (int i = c-1; i >= 0; i--) {
-		if (part[i] != (R-1))
-			return 0;
-	}
-	return 1;
-}
+// bool KeyPart_isMax(int c, Digit *part) {
+// 	for (int i = c-1; i >= 0; i--) {
+// 		if (part[i] != (R-1))
+// 			return 0;
+// 	}
+// 	return 1;
+// }
 
 Digit* KeyPart_create(int c, int pos, Key *key) {
 	#if FIXED_SPACE

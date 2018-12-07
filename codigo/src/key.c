@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include "key.h"
 
+#include <stdlib.h>
+#include <stdio.h>
+
 // Inicializa e retorna uma chave a partir do vetor de char dado.
 // Exemplo: s = "abcdwxyz"  =>  k = 0 1 2 3 22 23 24 25
 Key init_key(unsigned char s[]) {
@@ -78,6 +81,18 @@ Key subset_sum(Key k, Key T[N]) {
 }
 
 // ===== //
+
+void Key_readTable(Key table[N]) {
+    for (int i = 0; i < N; i++) {
+        Digit aux[C];
+        int rt = scanf("%s",aux);
+        if (rt != 1) {
+            fprintf(stderr, "Falha ao ler a tabela\n");
+            exit(1);
+        }
+        table[i] = init_key(aux);
+    }
+}
 
 int Key_compare(const Key* a, const Key* b){
     for (int i = 0; i < C; i++) {
