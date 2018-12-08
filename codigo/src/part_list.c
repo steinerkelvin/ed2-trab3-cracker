@@ -13,6 +13,14 @@ void parts_freeSpace() {
 }
 
 
+void copy_digits_to(int c, int pos, Digit *part, Key *key) {
+	int k = pos;
+	for (int i = 0; i < c; i++) {
+		key->digit[k++] = part[i];
+	}
+}
+
+
 void PartList_free(PartList* node) {
 	PartList *aux;
 	while (node != NULL) {
@@ -37,27 +45,4 @@ void PartList_insert(PartList** ref, int c, int pos, Key *key) {
 	node->next = *ref;
 	*ref = node;
 }
-
-
-void copy_digits_to(int c, int pos, Digit *part, Key *key) {
-	int k = pos;
-	for (int i = 0; i < c; i++) {
-		key->digit[k++] = part[i];
-	}
-}
-
-// Digit* KeyPart_create(int c, int pos, Key *key) {
-// 	#if FIXED_SPACE
-// 		Digit* part = space_getNext(&partlist_space);
-// 	#else
-// 		Digit* part = malloc(sizeof(PartNode) + sizeof(Digit[c]));
-// 	#endif
-
-// 	int k = pos;
-// 	for (int i = 0; i < c; i++) {
-// 		part[i] = key->digit[k++];
-// 	}
-// 	return part;
-// }
-
 

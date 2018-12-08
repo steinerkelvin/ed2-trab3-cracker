@@ -25,16 +25,14 @@ typedef struct part_list {
  */
 void copy_digits_to(int c, int pos, Digit *part, Key *key);
 
-// Digit* KeyPart_create(int c, int pos, Key *key);
-
-
-void PartList_free(PartList* node);
 
 void PartList_insert(PartList** list, int c, int pos, Key *key);
 
+void PartList_free(PartList* node);
 
 
 void parts_reserveSpace(int c, int n);
+
 void parts_freeSpace();
 
 
