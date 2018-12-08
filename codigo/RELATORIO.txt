@@ -6,7 +6,7 @@
 Nome 1: Athus Assuncao Cavalini
 Nome 2: Kelvin Steiner Santos
 SO utilizado: Linux (Ubuntu 16.04 e Manjaro)
-Versão do compilador utilizado:
+Versão do compilador utilizado: GCC 8.2.1
 Editor(es) de código utilizado(s): vscode, Atom
 Número de horas gastas para fazer o trabalho (aproximado): 
 
@@ -15,23 +15,68 @@ Número de horas gastas para fazer o trabalho (aproximado):
  *  você tenha feito no código. Se você não utilizou key.c, descreva a
  *  estrutura de dados que você utilizou para manipular as senhas.
  *****************************************************************************/
+As funções originais do arquivo foram mantidas e foram adicionadas algumas novas
+para fazer outras operações necessárias, como comparar duas Keys (utilizada para
+inserção e busca na árvore binária), assim como implementar algumas operações de
+maneira mais eficiente e utilizando passagem por referência.
 
 
 /******************************************************************************
  *  Descreva a sua solução força bruta (brute.c) .
  *****************************************************************************/
+A solução força bruta inicia uma Key nula e a incrementa, realizando o
+subset_sum a cada incremento e comparando com a Key passada como argumento. A
+função de incremento foi definida no arquivo key.c e soma 1 ao conteúdo (soma
+binária).
 
 
 /******************************************************************************
  *  Faça uma descrição de alto nível do seu programa de quebra de senha
  *  (decrypt.c).
  *****************************************************************************/
+A implementação do decrypt funciona por dois métodos fundamentais:
+ 1. a utilização de programação dinâmica para reaproveitar computações de somas;
+ 2. uma propriedade algébrica do hash de senha utilizada para "antecipar" o hash
+    necessário para compor o hash alvo:
+    hash(senha) - hash(a) = hash(b)    (mod 2^N)
+    sendo (a) e (b) pedaços independentes de uma chave que juntos formam a senha
+    completa:  [ a ][ b ] = [  senha ]
+
+O método (1) é primeiramente utilizado na forma de pre-computação dos hashs para
+cada valor possível de dígito em cada posição da senha, portanto agrupando
+subconjuntos de 5 em 5 linhas na tabela original. Os valores computados são
+armazenados em uma matriz C x R de chaves. Isso, além de reaproveitar a
+computação dessas somas tem a vantagem de fazer com que não sejam necessárias
+extrair os bits da chaves para selecionar as linhas, coisa que requer um número
+considerável de operações a mais.
+
+A partir disso, o decrypt utiliza uma "pilha de somas" que trabalha calculando
+e armazenando o valor de soma para cada dígito adicionado para um posição
+subsequente da senha. A soma é acumulada até que seja completado o número de
+caracteres desejado. Para os próximos valores de combinação posśiveis das
+posições consideradas, as somas intermediárias produzidas são aproveitadas
+até que seu dígito correspondente mude.
+
+O método (2) é feito dividindo-se a chave em duas partes (idealmente de tamanhos
+iguais) sendo a pilha é utilizada para produzir os hashes para as combinações
+possíveis dentro de cada parte. As somas produzidas para a primeira parte são
+armazenadas em um tabelas de símbolos de modo que fiquem associadas às
+combinações que as produziram. As somas para a segunda parte por sua vez são
+subtraídas do hash alvo, para determinar o hash requerido para a primeira parte.
+Esse valor é buscado na tabela de símbolos para encontrar a primeira parte da
+chave que combinada com a segunda parte produz o hash alvo.
 
 
 /******************************************************************************
  *  Descreva a implementação da tabela de símbolos que você utilizou em
  *  decrypt.c .
  *****************************************************************************/
+A tabela de símbolos utilizada foi implementada como uma hash table (foi usada
+a função de Horner), cujas colisões são resolvidas inserindo os itens em uma AVL
+para garantir um baixo tempo de consulta, a despeito do maior tempo de construção.
+Os nós das AVL contém, cada um, uma Key que representa uma soma produzida
+pelo processo de subset sum associada a uma lista dos pedaços de chave que a produzem.
+Isso foi necessário visto que diferentes chaves podem resultar na mesma soma.
 
 
 /******************************************************************************
@@ -56,10 +101,10 @@ solution            ormaybenot
 
 Tamanho     Tempo (segundos)
 ----------------------------
- 4
- 5
- 6
- 8
+ 4          0.01
+ 5          6.93
+ 6          277
+ 8          300000*
 
 /******************************************************************************
  *  Quanto tempo decrypt.c leva para quebrar as senhas de um dado tamanho?
@@ -70,22 +115,55 @@ Tamanho     Tempo (segundos)
 
 Tamanho     Tempo (segundos)    Memória (bytes)
 ----------------------------------------------
- 6          0.104               270M    (269,848,280)
- 8          0.396               315M    (314,577,624)
-10          16.86               1700M
-12          
+ 6          0.032               18M     (18,453,448)
+ 8          0.471               71M     (71,308,232)
+10          240.0               71M     (71,308,232)
+12          245000*             71M*    (71,308,232)
+
+Utilizando 5 dígitos na tabela de símbolos
+10          20.16               1950M
+12          7200*               1950M
+
+A tabela de símbolos apresenta um tempo de processamento igual para os exemplos
+maiores que 7, já que o tamanho máximo dela é 4. Como é possível ver na entrada
+de tamanho 8, este tempo de processamento é bem abaixo de 0.5s. Dessa forma, para
+a entrada de 12 caracteres, estima-se que o custo em tempo seja de 0.5s + o custo
+de tempo para a realização do método bruteforce com os caracteres restantes. Vendo
+que para a entrada de 10 caracteres este tempo se aproxima de 239.5s, é provável que
+a entrada de tamanho 12 custe 239.5*(32^2), ou ~245000s.
+
+Para uma tabela de símbolos com até 5 dígitos, no exemplo de entrada de 10 caracteres,
+sabemos que o brute force é realizado para 5 caracteres. Como visto anteriormente,
+isso tem um custo de tempo de ~7s. Dessa forma, vemos que a tabela de símbolos apresentou
+um custo de ~13s. Utilizando o mesmo raciocínio anterior, podemos estimar que o tempo
+para a entrada de 12 caracteres é igual a 13s+7*(32^2)s, ou ~7200s.
+
+Obs: Para as estimativas não foram contabilizados os tempos de acesso à tabela de símbolos,
+mas sabe-se que o número de acessos cresce proporcionalmente ao crescimento do brute force
+e acredita-se que isso impacte significativamente no tempo de execução. 
 
 /******************************************************************************
  *  Quantas operações brute.c faz sobre uma senha com N bits?
  *  Quantas operações decrypt.c faz sobre uma senha com N bits?
  *  Utilize a notação de big-Oh nas suas respostas.
  *****************************************************************************/
-
+Utilizando como modelo de custo operações sobre chaves (Key), o brute force tem
+complexidade O(N . 2^N)
+O decrypt tem complexidade O(2^N)
 
 /******************************************************************************
  *  Descreva qualquer problema grave que você encontrou ao desenvolver
  *  o trabalho.
  *****************************************************************************/
+O maior problema encontrado foi o fato do problema precisar de muito espaço ou
+muito desempenho para ser resolvido. Desta forma, foi necessário encontrar um 
+equilíbrio entre o uso de memória e processador para que a solução se tornasse
+aplicável.
+Além disso, o custo (em tempo) de alocar e liberar pequenos (e numerosos) espaços
+de memória prejudicou o tempo de execução do programa. Dessa forma, foi necessário
+contornar a situação calculando e alocando previamente, em um só bloco, toda a
+memória necessária para a hashtable, sendo possível liberar todo ele de uma só
+vez ao final da execução.
 
 
 /******************************************************************************
