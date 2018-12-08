@@ -15,7 +15,7 @@ int main(int argc, char* argv[]) {
 	for (Key key = {{0}}; ; Key_inc(&key)) {
 
         Key sum = subset_sum(key, table);
-		if (Key_compare(&sum, &in) == 0) {
+		if (Key_isEqual(&sum, &in)) {
 			print_key_char(key);
 		}
 

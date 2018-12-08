@@ -1,15 +1,15 @@
-#include "key_part.h"
+#include "part_list.h"
 #include <assert.h>
 #include "space.h"
 
-Space keypart_space;
+Space partlist_space;
 
 void parts_reserveSpace(int c, int n) {
-	keypart_space = space_alloc(n, sizeof(PartList) + sizeof(Digit[c]));
+	partlist_space = space_alloc(n, sizeof(PartList) + sizeof(Digit[c]));
 }
 
 void parts_freeSpace() {
-	space_free(&keypart_space);
+	space_free(&partlist_space);
 }
 
 
@@ -24,7 +24,7 @@ void PartList_free(PartList* node) {
 
 void PartList_insert(PartList** ref, int c, int pos, Key *key) {
 	#if FIXED_SPACE
-		PartList *node = space_getNext(&keypart_space);
+		PartList *node = space_getNext(&partlist_space);
 	#else
 		PartList *node = malloc(sizeof(PartList) + sizeof(Digit[c]));
 	#endif
@@ -48,7 +48,7 @@ void copy_digits_to(int c, int pos, Digit *part, Key *key) {
 
 // Digit* KeyPart_create(int c, int pos, Key *key) {
 // 	#if FIXED_SPACE
-// 		Digit* part = space_getNext(&keypart_space);
+// 		Digit* part = space_getNext(&partlist_space);
 // 	#else
 // 		Digit* part = malloc(sizeof(PartNode) + sizeof(Digit[c]));
 // 	#endif

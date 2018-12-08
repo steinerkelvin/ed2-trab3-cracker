@@ -13,8 +13,8 @@ void check_params(int argc, char* argv[]) {
     }
     char *param = argv[1];
     if (strlen(param) < C) {
-        fprintf(stderr, "ERRO: hash de senha muito curto: '%s'\n", param);
-        fprintf(stderr, "necessário mínimo de %d caracteres\n", C);
+        fprintf(stderr, "ERRO: Hash de senha muito curto: '%s'\n", param);
+        fprintf(stderr, "      necessário mínimo de %d caracteres.\n", C);
         exit(1);
     }
 }

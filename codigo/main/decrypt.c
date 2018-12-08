@@ -8,9 +8,9 @@
 
 #include "util.h"
 #include "key.h"
-#include "key_part.h"
+#include "part_list.h"
 #include "table.h"
-#include "key_part.h"
+#include "part_list.h"
 #include "per_digit.h"
 #include "sum_stack.h"
 #include "hash_table.h"
@@ -51,7 +51,7 @@ HashTable* buildSymbolTable(
 
 
     // fprintf(stderr, "hashmap size: %d\n", table->numItems); //* DEBUG
-    fprintf(stderr, "colisoes: %d\n", colisoes); //* DEBUG
+    // fprintf(stderr, "colisoes: %d\n", colisoes); //* DEBUG
 
     return table;
 }
@@ -67,10 +67,11 @@ int main(int argc, char* argv[]) {
 
     // ==== Cria tabela de símbolos para combinações de `c_tbl` caracteres ====
 
-    int p_tbl = 0;                   // primeira posição
-    int c_tbl = MIN(5, C_TABLE);   // número de caracteres delegados
+    int p_tbl = 0;                   
+    // Número de caracteres delegados à tabela (no máximo metade da senha)
+    int c_tbl = MIN(C/2, C_TABLE);   
     int pos = c_tbl;
-    fprintf(stderr, "c_tbl: %d\n", c_tbl); //* DEBUG
+    // fprintf(stderr, "c_tbl: %d\n", c_tbl); //* DEBUG
 
     // Reserva espaço para os valores da tabela
     const int n_tbl = (1<<(B*c_tbl));
@@ -84,26 +85,29 @@ int main(int argc, char* argv[]) {
 
     // ==== Faz combinações para o resto da chave utilizando pilha de somas ====
 
-    int p_stk = pos;     // primeira posição
-    int c_br = (C-pos); // número de caracteres delegados
-
-    fprintf(stderr, "c_br: %d\n", c_br); //* DEBUG
+    int p_stk = pos;    // primeira posição
+    int c_br = (C-pos); 
+    // fprintf(stderr, "c_br: %d\n", c_br); //* DEBUG
 
     {
         SumStack stack = SumStack_create(c_br, (Key*)perDigitTable[p_stk]);
         Key *stKey = SumStack_getKey(&stack);
         Key *stSum = SumStack_getSum(&stack);
 
+        // Para cada combinação do resto da chave
         do {
             SumStack_calc(&stack);
 
+            // subtrai do hash alvo
             Key needed; Key_sub(&needed, &target, stSum);
-            PartList *list; bool has = HT_search(map, &needed, &list);
+            // e consulta na tabela
+            PartList *list;
+            bool has = HT_search(map, &needed, &list);
             if (has) {
                 Key result;
                 copy_digits_to(c_br, p_stk, stKey->digit, &result);
 
-                // Para todas as chaves associadas à soma encontrada
+                // Imprime para todas as chaves associadas à soma encontrada
                 for (; list != NULL; list = list->next) {
                     copy_digits_to(c_tbl, p_tbl, list->part, &result);
                     print_key_char(result);
